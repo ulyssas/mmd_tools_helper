@@ -1,28 +1,30 @@
 bl_info = {
-	"name": "MMD tools helper",
-	"author": "Hogarth-MMD",
-	"version": (2, 4),
-	"blender": (2, 79, 0),
-	"location": "View3D > Tool Shelf > MMD Tools Helper",
-	"description": "various mmd_tools helper scripts",
-	"warning": "",
-	"wiki_url": "",
-	"category": "Object",
-	}
+    "name": "MMD Tools Helper",
+    "author": "Hogarth-MMD",
+    "version": (2, 4),
+    "blender": (2, 79, 0),
+    "location": "View3D > Tool Shelf > MMD Tools Helper",
+    "description": "various mmd_tools helper scripts",
+    "warning": "",
+    "wiki_url": "",
+    "category": "Object",
+}
 
 import bpy
 
 class MMDToolsHelperPanel(bpy.types.Panel):
-	"""Creates the MMD Tools Helper Panel in a VIEW_3D TOOLS tab"""
-	bl_label = "MMD Tools Helper"
-	bl_idname = "OBJECT_PT_mmd_tools_helper"
-	bl_space_type = "VIEW_3D"
-	bl_region_type = "TOOLS"
-	bl_category = "mmd_tools_helper"
+    """Creates the MMD Tools Helper Panel in a VIEW_3D TOOLS tab"""
 
-	def draw(self, context):
-		layout = self.layout
-		row = layout.row()
+    bl_label = "MMD Tools Helper"
+    bl_idname = "OBJECT_PT_mmd_tools_helper"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "TOOLS"
+    bl_category = "mmd_tools_helper"
+
+    def draw(self, context):
+        layout = self.layout
+        row = layout.row()
+
 
 from . import model
 from . import mmd_view
@@ -43,6 +45,7 @@ from . import blender_bone_names_to_japanese_bone_names
 
 
 import imp
+
 imp.reload(model)
 imp.reload(mmd_view)
 imp.reload(mmd_lamp_setup)
@@ -61,14 +64,13 @@ imp.reload(miscellaneous_tools)
 imp.reload(blender_bone_names_to_japanese_bone_names)
 
 
-
 def register():
-	bpy.utils.register_module(__name__)
+    bpy.utils.register_class(__name__)
 
 
 def unregister():
-	bpy.utils.unregister_module(__name__)
+    bpy.utils.unregister_class(__name__)
 
 
 if __name__ == "__main__":
-	register()
+    register()
