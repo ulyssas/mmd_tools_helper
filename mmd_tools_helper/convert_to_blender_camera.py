@@ -7,8 +7,8 @@ class MMDCameraToBlenderCameraPanel(bpy.types.Panel):
     bl_idname = "OBJECT_PT_mmd_camera_to_blender_camera"
     bl_label = "Convert MMD Cameras to Blender cameras"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-    bl_category = "mmd_tools_helper"
+    bl_region_type = "UI"
+    bl_category = "Helper"
 
     def draw(self, context):
         layout = self.layout
@@ -23,7 +23,7 @@ class MMDCameraToBlenderCameraPanel(bpy.types.Panel):
 
 
 def main(context):
-    for o in bpy.context.scene.objects:
+    for o in bpy.context.view_layer.objects:
         if o.type == "CAMERA":
             camera = o
             camera.lock_location[0] = False
@@ -42,7 +42,7 @@ def main(context):
 
     if camera.parent is not None:
         if camera.parent.mmd_type == "CAMERA":
-            bpy.context.scene.objects.unlink(camera.parent)
+            bpy.context.view_layer.objects.unlink(camera.parent)
             bpy.ops.object.parent_clear(type="CLEAR_KEEP_TRANSFORM")
 
 
@@ -62,12 +62,12 @@ class MMDCameraToBlenderCamera(bpy.types.Operator):
 
 
 def register():
-    bpy.utils.register_class(MDCameraToBlenderCamera)
+    bpy.utils.register_class(MMDCameraToBlenderCamera)
     bpy.utils.register_class(MMDCameraToBlenderCameraPanel)
 
 
 def unregister():
-    bpy.utils.unregister_class(MDCameraToBlenderCamera)
+    bpy.utils.unregister_class(MMDCameraToBlenderCamera)
     bpy.utils.unregister_class(MMDCameraToBlenderCameraPanel)
 
 

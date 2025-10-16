@@ -1,5 +1,6 @@
-import bpy
 import sys
+
+import bpy
 
 
 class MMDBackgroundColorPicker_Panel(bpy.types.Panel):
@@ -8,8 +9,8 @@ class MMDBackgroundColorPicker_Panel(bpy.types.Panel):
     bl_idname = "OBJECT_PT_mmd_background_color_picker"
     bl_label = "MMD background color picker"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-    bl_category = "mmd_tools_helper"
+    bl_region_type = "UI"
+    bl_category = "Helper"
 
     def draw(self, context):
         layout = self.layout
@@ -25,19 +26,24 @@ class MMDBackgroundColorPicker_Panel(bpy.types.Panel):
 
 
 def main(context):
-    screens = ["Animation", "Scripting", "UV Editing", "Default"]
+    screens = ["Animation", "Scripting", "UV Editing", "Layout"]
 
     for screen in screens:
-        for area in bpy.data.screens[screen].areas:
-            if area.type == "VIEW_3D":
-                area.spaces[0].show_world = True
+        if screen in bpy.data.screens:
+            for area in bpy.data.screens[screen].areas:
+                if area.type == "VIEW_3D":
+                    for space in area.spaces:
+                        if space.type == "VIEW_3D":
+                            space.shading.background_type = "WORLD"
 
-    bpy.context.scene.world.horizon_color = bpy.context.scene.BackgroundColor
+    if bpy.context.view_layer.world:
+        bpy.context.view_layer.world.color = bpy.context.view_layer.BackgroundColor
 
-    bpy.context.user_preferences.themes[0].view_3d.space.text_hi = (
-        round(1 - bpy.context.scene.BackgroundColor[0]),
-        round(1 - bpy.context.scene.BackgroundColor[1]),
-        round(1 - bpy.context.scene.BackgroundColor[2]),
+    theme = bpy.context.preferences.themes[0]
+    theme.view_3d.space.text_hi = (
+        round(1 - bpy.context.view_layer.BackgroundColor[0]),
+        round(1 - bpy.context.view_layer.BackgroundColor[1]),
+        round(1 - bpy.context.view_layer.BackgroundColor[2]),
     )
 
 

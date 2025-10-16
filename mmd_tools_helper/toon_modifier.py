@@ -1,4 +1,5 @@
 import bpy
+
 from . import model
 
 # blend_type
@@ -11,8 +12,8 @@ class MMDToonModifierPanel(bpy.types.Panel):
     bl_idname = "OBJECT_PT_mmd_toon_modifier"
     bl_label = "MMD toon modifier"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-    bl_category = "mmd_tools_helper"
+    bl_region_type = "UI"
+    bl_category = "Helper"
 
     def draw(self, context):
         layout = self.layout
@@ -31,20 +32,20 @@ def main(context):
     # print("mesh_objects_list = ", mesh_objects_list)
     assert mesh_objects_list is not None, "The active object is not an MMD model."
     for o in mesh_objects_list:
-        bpy.context.scene.objects.active = o
+        bpy.context.view_layer.objects.active = o
         for m in bpy.context.active_object.data.materials:
             for n in m.node_tree.nodes:
                 if n.label == "toon_modifier":
                     n.inputs["Color2"].default_value[0] = (
-                        bpy.context.scene.ToonModifierColor[0]
+                        bpy.context.view_layer.ToonModifierColor[0]
                     )
                     n.inputs["Color2"].default_value[1] = (
-                        bpy.context.scene.ToonModifierColor[1]
+                        bpy.context.view_layer.ToonModifierColor[1]
                     )
                     n.inputs["Color2"].default_value[2] = (
-                        bpy.context.scene.ToonModifierColor[2]
+                        bpy.context.view_layer.ToonModifierColor[2]
                     )
-                    n.blend_type = bpy.context.scene.ToonModifierBlendType
+                    n.blend_type = bpy.context.view_layer.ToonModifierBlendType
 
 
 class MMDToonModifier(bpy.types.Operator):

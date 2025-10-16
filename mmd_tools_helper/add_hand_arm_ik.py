@@ -1,5 +1,7 @@
-import bpy
 import math
+
+import bpy
+
 from . import model
 
 
@@ -9,8 +11,8 @@ class Add_MMD_Hand_Arm_IK_Panel(bpy.types.Panel):
     bl_idname = "OBJECT_PT_mmd_add_hand_arm_ik"
     bl_label = "Add Hand Arm IK to MMD model"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-    bl_category = "mmd_tools_helper"
+    bl_region_type = "UI"
+    bl_category = "Helper"
 
     def draw(self, context):
         layout = self.layout
@@ -25,7 +27,9 @@ class Add_MMD_Hand_Arm_IK_Panel(bpy.types.Panel):
 def clear_IK(context):
     IK_target_bones = []
     IK_target_tip_bones = []
-    bpy.context.scene.objects.active = model.findArmature(bpy.context.active_object)
+    bpy.context.view_layer.objects.active = model.findArmature(
+        bpy.context.active_object
+    )
     bpy.ops.object.mode_set(mode="POSE")
     english = ["elbow_L", "elbow_R", "wrist_L", "wrist_R", "middle1_L", "middle1_R"]
     japanese = ["左ひじ", "右ひじ", "左手首", "右手首", "左中指１", "右中指１"]
@@ -37,7 +41,7 @@ def clear_IK(context):
             for c in bpy.context.active_object.pose.bones[b].constraints:
                 if c.type == "IK":
                     print("c.target = ", c.target)
-                    if c.target == bpy.context.scene.objects.active:
+                    if c.target == bpy.context.view_layer.objects.active:
                         if c.subtarget is not None:
                             print("c.subtarget = ", c.subtarget)
                             if c.subtarget not in IK_target_bones:
@@ -113,7 +117,9 @@ def armature_diagnostic():
 
 
 def main(context):
-    bpy.context.scene.objects.active = model.findArmature(bpy.context.active_object)
+    bpy.context.view_layer.objects.active = model.findArmature(
+        bpy.context.active_object
+    )
 
     # Lists of possible names of elbow, wrist and middle1 bones
     ARM_LEFT_BONE = ["左ひじ", "ひじ.L", "elbow_L"]

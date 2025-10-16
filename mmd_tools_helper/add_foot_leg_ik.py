@@ -1,5 +1,7 @@
-import bpy
 import math
+
+import bpy
+
 from . import model
 
 # def armature_diagnostic():
@@ -39,8 +41,8 @@ class Add_MMD_foot_leg_IK_Panel(bpy.types.Panel):
     bl_idname = "OBJECT_PT_mmd_add_foot_leg_ik"
     bl_label = "Add foot leg IK to MMD model"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-    bl_category = "mmd_tools_helper"
+    bl_region_type = "UI"
+    bl_category = "Helper"
 
     def draw(self, context):
         layout = self.layout
@@ -56,7 +58,9 @@ class Add_MMD_foot_leg_IK_Panel(bpy.types.Panel):
 def clear_IK(context):
     IK_target_bones = []
     IK_target_tip_bones = []
-    bpy.context.scene.objects.active = model.findArmature(bpy.context.active_object)
+    bpy.context.view_layer.objects.active = model.findArmature(
+        bpy.context.active_object
+    )
     bpy.ops.object.mode_set(mode="POSE")
     english = ["knee_L", "knee_R", "ankle_L", "ankle_R", "toe_L", "toe_R"]
     japanese = ["左ひざ", "右ひざ", "左足首", "右足首", "左つま先", "右つま先"]
@@ -67,7 +71,7 @@ def clear_IK(context):
             for c in bpy.context.active_object.pose.bones[b].constraints:
                 if c.type == "IK":
                     print("c.target = ", c.target)
-                    if c.target == bpy.context.scene.objects.active:
+                    if c.target == bpy.context.view_layer.objects.active:
                         if c.subtarget is not None:
                             print("c.subtarget = ", c.subtarget)
                             if c.subtarget not in IK_target_bones:
@@ -97,7 +101,9 @@ def clear_IK(context):
 
 
 def main(context):
-    bpy.context.scene.objects.active = model.findArmature(bpy.context.active_object)
+    bpy.context.view_layer.objects.active = model.findArmature(
+        bpy.context.active_object
+    )
 
     # test japanese or english ("leg_R", "右足"), ("leg_L", "左足"),
     english = ["knee_L", "knee_R", "ankle_L", "ankle_R", "toe_L", "toe_R"]
@@ -115,9 +121,7 @@ def main(context):
     print("japanese_bones_L_R =", japanese_bones_L_R)
     print("\n\n")
 
-    assert (
-        english_bones == True or japanese_bones == True or japanese_bones_L_R == True
-    ), (
+    assert english_bones or japanese_bones or japanese_bones_L_R, (
         "This is not an MMD armature. MMD bone names of knee, ankle and toe bones are required for this script to run."
     )
 
@@ -137,9 +141,9 @@ def main(context):
     ]
     ik_bones = any([ik in keys for ik in IK_BONE_NAMES])
 
-    assert ik_bones == False, "This armature already has MMD IK bone names."
+    assert not ik_bones, "This armature already has MMD IK bone names."
 
-    if english_bones == True:
+    if english_bones:
         LEG_IK_LEFT_BONE = "leg IK_L"
         LEG_IK_RIGHT_BONE = "leg IK_R"
         TOE_IK_LEFT_BONE = "toe IK_L"
@@ -150,7 +154,7 @@ def main(context):
         TOE_IK_RIGHT_BONE_TIP = "toe IK_R_t"
         ROOT = "root"
 
-    if japanese_bones == True or japanese_bones_L_R == True:
+    if japanese_bones or japanese_bones_L_R:
         LEG_IK_LEFT_BONE = "左足ＩＫ"
         LEG_IK_RIGHT_BONE = "右足ＩＫ"
         TOE_IK_LEFT_BONE = "左つま先ＩＫ"

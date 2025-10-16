@@ -1,4 +1,5 @@
 import bpy
+
 from . import model
 
 
@@ -8,8 +9,8 @@ class BlenderToJapaneseBoneNamesPanel(bpy.types.Panel):
     bl_idname = "OBJECT_PT_blender_to_japanese_bone_names"
     bl_label = "Copy Blender bone names to Japanese bone names"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-    bl_category = "mmd_tools_helper"
+    bl_region_type = "UI"
+    bl_category = "Helper"
 
     def draw(self, context):
         layout = self.layout

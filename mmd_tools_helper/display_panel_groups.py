@@ -1,6 +1,6 @@
 import bpy
-from . import model
-from . import import_csv
+
+from . import import_csv, model
 
 
 def __items(display_item_frame):
@@ -13,8 +13,8 @@ class MmdToolsDisplayPanelGroupsPanel(bpy.types.Panel):
     bl_idname = "OBJECT_PT_mmd_add_display_panel_groups"
     bl_label = "Create Display Panel Groups and Add Items"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-    bl_category = "mmd_tools_helper"
+    bl_region_type = "UI"
+    bl_category = "Helper"
 
     def draw(self, context):
         layout = self.layout
@@ -31,7 +31,7 @@ class MmdToolsDisplayPanelGroupsPanel(bpy.types.Panel):
 
 
 def delete_empty_display_panel_groups(root):
-    bpy.context.scene.objects.active = root
+    bpy.context.view_layer.objects.active = root
     for d in range(
         len(bpy.context.active_object.mmd_root.display_item_frames) - 1, 1, -1
     ):
@@ -41,12 +41,12 @@ def delete_empty_display_panel_groups(root):
 
 
 def clear_display_panel_groups(root):
-    bpy.context.scene.objects.active = root
+    bpy.context.view_layer.objects.active = root
     bpy.context.active_object.mmd_root.display_item_frames.clear()
 
 
 def display_panel_groups_from_bone_groups(root, armature_object):
-    bpy.context.scene.objects.active = armature_object
+    bpy.context.view_layer.objects.active = armature_object
     bpy.ops.object.mode_set(mode="POSE")
     bone_groups = armature_object.pose.bone_groups.keys() + ["Other"]
     bone_groups_of_bones = []
@@ -63,8 +63,8 @@ def display_panel_groups_from_bone_groups(root, armature_object):
                     bone_groups_of_bones.append((b.name, "Other"))
                 if b.name in ["root", "全ての親", "center", "センター"]:
                     bone_groups_of_bones.append((b.name, "Root"))
-    # bpy.context.scene.objects.active = armature_object.parent
-    bpy.context.scene.objects.active = model.findRoot(armature_object)
+    # bpy.context.view_layer.objects.active = armature_object.parent
+    bpy.context.view_layer.objects.active = model.findRoot(armature_object)
     group = bpy.context.active_object.mmd_root.display_item_frames.add()
     group.name = "Root"
     group.name_e = "Root"
@@ -104,7 +104,7 @@ def display_panel_groups_from_shape_keys(mesh_objects_list):
 
 
 def display_panel_groups_non_vertex_morphs(root):
-    bpy.context.scene.objects.active = root
+    bpy.context.view_layer.objects.active = root
     for m in root.mmd_root.bone_morphs:
         if m.name not in __items(root.mmd_root.display_item_frames["表情"]).keys():
             item = __items(root.mmd_root.display_item_frames["表情"]).add()
@@ -163,7 +163,7 @@ def display_panel_groups_create(root, armature_object):
     BONE_NAMES_DICTIONARY = import_csv.use_csv_bones_dictionary()
     FINGER_BONE_NAMES_DICTIONARY = import_csv.use_csv_bones_fingers_dictionary()
 
-    bpy.context.scene.objects.active = armature_object
+    bpy.context.view_layer.objects.active = armature_object
 
     items_added = []
 
@@ -212,7 +212,7 @@ def display_panel_groups_create(root, armature_object):
     ]
     groups_names_2 = [("Root", root_names), ("指", finger_names), ("体", body_names)]
 
-    bpy.context.scene.objects.active = root
+    bpy.context.view_layer.objects.active = root
     for g in My_Display_Panel_Groups:
         if g[1] not in bpy.context.active_object.mmd_root.display_item_frames.keys():
             group = bpy.context.active_object.mmd_root.display_item_frames.add()
@@ -253,16 +253,16 @@ def display_panel_groups_create(root, armature_object):
 
 def main(context):
     armature_object = model.findArmature(bpy.context.active_object)
-    bpy.context.scene.objects.active = armature_object
+    bpy.context.view_layer.objects.active = armature_object
     if model.findRoot(bpy.context.active_object) is None:
         bpy.ops.mmd_tools.convert_to_mmd_model()
     root = model.findRoot(bpy.context.active_object)
     mesh_objects_list = model.findMeshesList(bpy.context.active_object)
 
-    if bpy.context.scene.display_panel_options == "no_change":
+    if bpy.context.view_layer.display_panel_options == "no_change":
         pass
     if (
-        bpy.context.scene.display_panel_options
+        bpy.context.view_layer.display_panel_options
         == "display_panel_groups_from_bone_groups"
     ):
         clear_display_panel_groups(root)
@@ -270,7 +270,7 @@ def main(context):
         display_panel_groups_from_shape_keys(mesh_objects_list)
         display_panel_groups_non_vertex_morphs(root)
         delete_empty_display_panel_groups(root)
-    if bpy.context.scene.display_panel_options == "add_display_panel_groups":
+    if bpy.context.view_layer.display_panel_options == "add_display_panel_groups":
         clear_display_panel_groups(root)
         display_panel_groups_create(root, armature_object)
         display_panel_groups_from_shape_keys(mesh_objects_list)

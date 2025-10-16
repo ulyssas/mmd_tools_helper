@@ -1,6 +1,6 @@
 import bpy
-from . import model
-from . import import_csv
+
+from . import import_csv, model
 
 
 class BonesRenamerPanel_MTH(bpy.types.Panel):
@@ -9,8 +9,8 @@ class BonesRenamerPanel_MTH(bpy.types.Panel):
     bl_label = "Bones Renamer"
     bl_idname = "OBJECT_PT_bones_renamer_MTH"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-    bl_category = "mmd_tools_helper"
+    bl_region_type = "UI"
+    bl_category = "Helper"
 
     def draw(self, context):
         layout = self.layout
@@ -29,12 +29,12 @@ class BonesRenamerPanel_MTH(bpy.types.Panel):
 
 # use international fonts and display the names of the bones
 def use_international_fonts_display_names_bones():
-    bpy.context.user_preferences.system.use_international_fonts = True
+    bpy.context.preferences.system.use_international_fonts = True
     bpy.context.object.data.show_names = True
 
 
 def unhide_all_armatures():
-    for o in bpy.context.scene.objects:
+    for o in bpy.context.view_layer.objects:
         if o.type == "ARMATURE":
             o.hide = False
 
@@ -43,10 +43,12 @@ def print_missing_bone_names():
     missing_bone_names = []
     BONE_NAMES_DICTIONARY = import_csv.use_csv_bones_dictionary()
     FINGER_BONE_NAMES_DICTIONARY = import_csv.use_csv_bones_fingers_dictionary()
-    SelectedBoneMap = bpy.context.scene.Destination_Armature_Type
+    SelectedBoneMap = bpy.context.view_layer.Destination_Armature_Type
     BoneMapIndex = BONE_NAMES_DICTIONARY[0].index(SelectedBoneMap)
     FingerBoneMapIndex = FINGER_BONE_NAMES_DICTIONARY[0].index(SelectedBoneMap)
-    bpy.context.scene.objects.active = model.findArmature(bpy.context.active_object)
+    bpy.context.view_layer.objects.active = model.findArmature(
+        bpy.context.active_object
+    )
     for b in BONE_NAMES_DICTIONARY:
         if BONE_NAMES_DICTIONARY.index(b) != 0:
             if b[BoneMapIndex] != "":
@@ -127,25 +129,27 @@ def rename_finger_bones(boneMap1, boneMap2, FINGER_BONE_NAMES_DICTIONARY):
                         ].mmd_bone.name_e = k[0]
                     bpy.ops.object.mode_set(mode="OBJECT")
 
-    bpy.context.scene.Origin_Armature_Type = boneMap2
+    bpy.context.view_layer.Origin_Armature_Type = boneMap2
     print_missing_bone_names()
 
 
 def main(context):
-    bpy.context.scene.objects.active = model.findArmature(bpy.context.active_object)
+    bpy.context.view_layer.objects.active = model.findArmature(
+        bpy.context.active_object
+    )
 
     use_international_fonts_display_names_bones()
     unhide_all_armatures()
     BONE_NAMES_DICTIONARY = import_csv.use_csv_bones_dictionary()
     FINGER_BONE_NAMES_DICTIONARY = import_csv.use_csv_bones_fingers_dictionary()
     rename_bones(
-        bpy.context.scene.Origin_Armature_Type,
-        bpy.context.scene.Destination_Armature_Type,
+        bpy.context.view_layer.Origin_Armature_Type,
+        bpy.context.view_layer.Destination_Armature_Type,
         BONE_NAMES_DICTIONARY,
     )
     rename_finger_bones(
-        bpy.context.scene.Origin_Armature_Type,
-        bpy.context.scene.Destination_Armature_Type,
+        bpy.context.view_layer.Origin_Armature_Type,
+        bpy.context.view_layer.Destination_Armature_Type,
         FINGER_BONE_NAMES_DICTIONARY,
     )
     bpy.ops.object.mode_set(mode="POSE")

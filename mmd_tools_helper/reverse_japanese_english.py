@@ -7,8 +7,8 @@ class ReverseJapaneseEnglishPanel(bpy.types.Panel):
     bl_idname = "OBJECT_PT_reverse_japanese_english"
     bl_label = "Reverse Japanese English names"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-    bl_category = "mmd_tools_helper"
+    bl_region_type = "UI"
+    bl_category = "Helper"
 
     def draw(self, context):
         layout = self.layout
@@ -35,10 +35,10 @@ def main(context):
     for m in bpy.data.materials:
         m.name = m.mmd_material.name
 
-    for o in bpy.context.scene.objects:
+    for o in bpy.context.view_layer.objects:
         if o.type == "ARMATURE":
             o.data.show_names = True
-            bpy.context.scene.objects.active = o
+            bpy.context.view_layer.objects.active = o
             bpy.ops.object.mode_set(mode="POSE")
             for b in bpy.context.active_object.pose.bones:
                 name_j = b.mmd_bone.name_j
@@ -50,7 +50,7 @@ def main(context):
 
     bpy.ops.object.mode_set(mode="OBJECT")
 
-    for o in bpy.context.scene.objects:
+    for o in bpy.context.view_layer.objects:
         if o.mmd_type == "ROOT":
             for vm in o.mmd_root.vertex_morphs:
                 name_j = vm.name

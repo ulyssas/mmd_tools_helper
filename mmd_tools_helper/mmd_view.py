@@ -1,7 +1,8 @@
 # Scales the Blender grid, thereby making it unnecessary to scale MMD models.
 
-import bpy
 import math
+
+import bpy
 
 
 class MMDViewPanel(bpy.types.Panel):
@@ -10,8 +11,8 @@ class MMDViewPanel(bpy.types.Panel):
     bl_idname = "OBJECT_PT_mmd_view"
     bl_label = "MMD View"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-    bl_category = "mmd_tools_helper"
+    bl_region_type = "UI"
+    bl_category = "Helper"
 
     def draw(self, context):
         layout = self.layout
@@ -24,26 +25,28 @@ class MMDViewPanel(bpy.types.Panel):
 
 
 def main(context):
-    # bpy.context.scene.render.fps = 30
+    # bpy.context.view_layer.render.fps = 30
 
     bpy.context.user_preferences.system.use_international_fonts = True
 
-    camera_objects = [ob for ob in bpy.context.scene.objects if ob.type == "CAMERA"]
+    camera_objects = [
+        ob for ob in bpy.context.view_layer.objects if ob.type == "CAMERA"
+    ]
     if len(camera_objects) == 0:
         camera_data = bpy.data.cameras.new("Camera")
         camera_object = bpy.data.objects.new("Camera", camera_data)
-        bpy.context.scene.objects.link(camera_object)
-        bpy.context.scene.update()
-        bpy.context.scene.camera = camera_object
+        bpy.context.view_layer.objects.link(camera_object)
+        bpy.context.view_layer.update()
+        bpy.context.view_layer.camera = camera_object
 
     if bpy.context.active_object is not None:
         active_object = bpy.context.active_object
     else:
-        active_object = bpy.context.scene.objects[-1]
+        active_object = bpy.context.view_layer.objects[-1]
 
-    o = bpy.context.scene.camera
+    o = bpy.context.view_layer.camera
     camera = o
-    bpy.context.scene.objects.active = camera
+    bpy.context.view_layer.objects.active = camera
     bpy.ops.mmd_tools.convert_to_mmd_camera(
         scale=1, bake_animation=False, camera_source="CURRENT", min_distance=0.1
     )
@@ -78,14 +81,14 @@ def main(context):
                 # Possible options are [‘PERSP’, ‘ORTHO’, ‘CAMERA’]
                 area.spaces[0].show_world = True
                 # bpy.data.screens['Default'].areas[4].spaces[0].show_world = True
-    bpy.context.scene.world.horizon_color = (1, 1, 1)
+    bpy.context.view_layer.world.horizon_color = (1, 1, 1)
     bpy.context.user_preferences.themes[0].view_3d.space.text_hi = (0, 0, 0)
 
-    # for o in bpy.context.scene.objects:
+    # for o in bpy.context.view_layer.objects:
     # if o.type == "ARMATURE":
     # o.data.show_names = True
 
-    bpy.context.scene.objects.active = active_object
+    bpy.context.view_layer.objects.active = active_object
 
 
 class MMDView(bpy.types.Operator):

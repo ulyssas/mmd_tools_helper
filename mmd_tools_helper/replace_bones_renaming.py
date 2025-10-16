@@ -1,4 +1,5 @@
 import bpy
+
 from . import model
 
 
@@ -8,8 +9,8 @@ class ReplaceBonesRenamingPanel(bpy.types.Panel):
     bl_label = "Replace bones renaming panel"
     bl_idname = "OBJECT_PT_replace_bones_renaming"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-    bl_category = "mmd_tools_helper"
+    bl_region_type = "UI"
+    bl_category = "Helper"
 
     def draw(self, context):
         layout = self.layout
@@ -34,21 +35,23 @@ class ReplaceBonesRenamingPanel(bpy.types.Panel):
 
 
 def main(context):
-    bpy.context.scene.objects.active = model.findArmature(bpy.context.active_object)
-    if bpy.context.scene.bones_all_or_selected == True:
+    bpy.context.view_layer.objects.active = model.findArmature(
+        bpy.context.active_object
+    )
+    if bpy.context.view_layer.bones_all_or_selected == True:
         for b in bpy.context.active_object.data.bones:
             if b.select == True:
                 if "dummy" not in b.name and "shadow" not in b.name:
                     b.name = b.name.replace(
-                        bpy.context.scene.find_bone_string,
-                        bpy.context.scene.replace_bone_string,
+                        bpy.context.view_layer.find_bone_string,
+                        bpy.context.view_layer.replace_bone_string,
                     )
-    if bpy.context.scene.bones_all_or_selected == False:
+    if bpy.context.view_layer.bones_all_or_selected == False:
         for b in bpy.context.active_object.data.bones:
             if "dummy" not in b.name and "shadow" not in b.name:
                 b.name = b.name.replace(
-                    bpy.context.scene.find_bone_string,
-                    bpy.context.scene.replace_bone_string,
+                    bpy.context.view_layer.find_bone_string,
+                    bpy.context.view_layer.replace_bone_string,
                 )
 
 

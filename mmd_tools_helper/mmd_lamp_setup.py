@@ -7,8 +7,8 @@ class MMDLampSetupPanel(bpy.types.Panel):
     bl_idname = "OBJECT_PT_mmd_lamp_setup"
     bl_label = "MMD Lamp Setup"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-    bl_category = "mmd_tools_helper"
+    bl_region_type = "UI"
+    bl_category = "Helper"
 
     def draw(self, context):
         layout = self.layout
@@ -37,38 +37,40 @@ def lamp_setup(o):
 
 
 def main(context):
-    bpy.context.scene.game_settings.material_mode = "GLSL"
+    bpy.context.view_layer.game_settings.material_mode = "GLSL"
     bpy.context.space_data.viewport_shade = "TEXTURED"
-    bpy.context.scene.world.light_settings.use_environment_light = True
+    bpy.context.view_layer.world.light_settings.use_environment_light = True
 
     # Set color management to None
-    bpy.context.scene.display_settings.display_device = "None"
+    bpy.context.view_layer.display_settings.display_device = "None"
 
-    lamp_objects = [ob for ob in bpy.context.scene.objects if ob.type == "LAMP"]
+    lamp_objects = [ob for ob in bpy.context.view_layer.objects if ob.type == "LAMP"]
     if len(lamp_objects) == 0:
         lamp_data = bpy.data.lamps.new("Lamp", "SUN")
         lamp_object = bpy.data.objects.new("Lamp", lamp_data)
-        bpy.context.scene.objects.link(lamp_object)
-        bpy.context.scene.update()
+        bpy.context.view_layer.objects.link(lamp_object)
+        bpy.context.view_layer.update()
 
     if bpy.context.active_object is not None:
         active_object = bpy.context.active_object
     else:
-        active_object = bpy.context.scene.objects[-1]
+        active_object = bpy.context.view_layer.objects[-1]
 
     if bpy.context.active_object is not None:
         if bpy.context.active_object.type == "LAMP":
             o = bpy.context.active_object
             lamp_setup(o)
         else:
-            lamp_objects = [ob for ob in bpy.context.scene.objects if ob.type == "LAMP"]
+            lamp_objects = [
+                ob for ob in bpy.context.view_layer.objects if ob.type == "LAMP"
+            ]
             o = lamp_objects[0]
-            bpy.context.scene.objects.active = o
+            bpy.context.view_layer.objects.active = o
             lamp_setup(o)
 
-    bpy.context.scene.objects.active = active_object
+    bpy.context.view_layer.objects.active = active_object
 
-    # bpy.context.scene.world.ambient_color = (0.6, 0.6, 0.6)
+    # bpy.context.view_layer.world.ambient_color = (0.6, 0.6, 0.6)
 
     # o.data.type = 'SPOT'
     # o.data.shadow_method = 'BUFFER_SHADOW'

@@ -1,6 +1,6 @@
 import bpy
-from . import import_csv
-from . import model
+
+from . import import_csv, model
 
 
 class ArmatureDiagnosticPanel(bpy.types.Panel):
@@ -9,8 +9,8 @@ class ArmatureDiagnosticPanel(bpy.types.Panel):
     bl_label = "Armature Diagnostic Panel"
     bl_idname = "OBJECT_PT_armature_diagnostic"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-    bl_category = "mmd_tools_helper"
+    bl_region_type = "UI"
+    bl_category = "Helper"
 
     def draw(self, context):
         layout = self.layout
@@ -28,10 +28,12 @@ def main(context):
     missing_bone_names = []
     BONE_NAMES_DICTIONARY = import_csv.use_csv_bones_dictionary()
     FINGER_BONE_NAMES_DICTIONARY = import_csv.use_csv_bones_fingers_dictionary()
-    SelectedBoneMap = bpy.context.scene.selected_armature_to_diagnose
+    SelectedBoneMap = bpy.context.view_layer.selected_armature_to_diagnose
     BoneMapIndex = BONE_NAMES_DICTIONARY[0].index(SelectedBoneMap)
     FingerBoneMapIndex = FINGER_BONE_NAMES_DICTIONARY[0].index(SelectedBoneMap)
-    bpy.context.scene.objects.active = model.findArmature(bpy.context.active_object)
+    bpy.context.view_layer.objects.active = model.findArmature(
+        bpy.context.active_object
+    )
     for b in BONE_NAMES_DICTIONARY:
         if BONE_NAMES_DICTIONARY.index(b) != 0:
             if b[BoneMapIndex] != "":
@@ -136,7 +138,9 @@ class ArmatureDiagnostic(bpy.types.Operator):
         return context.active_object is not None
 
     def execute(self, context):
-        bpy.context.scene.objects.active = model.findArmature(bpy.context.active_object)
+        bpy.context.view_layer.objects.active = model.findArmature(
+            bpy.context.active_object
+        )
         print()
         print()
         print(bpy.context.active_object.name, "all bone names")
