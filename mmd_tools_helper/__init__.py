@@ -56,8 +56,9 @@ if "bpy" in locals():
     importlib.reload(miscellaneous_tools)
     importlib.reload(blender_bone_names_to_japanese_bone_names)
 else:
-    import bpy
     import logging
+
+    import bpy
 
     __make_annotations = bpy.app.version >= (2, 80, 0)
     __bpy_property = (
@@ -65,22 +66,24 @@ else:
         if hasattr(bpy.props, "_PropertyDeferred")
         else tuple
     )
-    from . import model
-    from . import mmd_view
-    from . import mmd_lamp_setup
-    from . import convert_to_blender_camera
-    from . import background_color_picker
-    from . import boneMaps_renamer
-    from . import replace_bones_renaming
-    from . import armature_diagnostic
-    from . import add_foot_leg_ik
-    from . import add_hand_arm_ik
-    from . import display_panel_groups
-    from . import toon_textures_to_node_editor_shader
-    from . import toon_modifier
-    from . import reverse_japanese_english
-    from . import miscellaneous_tools
-    from . import blender_bone_names_to_japanese_bone_names
+    from . import (
+        add_foot_leg_ik,
+        add_hand_arm_ik,
+        armature_diagnostic,
+        background_color_picker,
+        blender_bone_names_to_japanese_bone_names,
+        boneMaps_renamer,
+        convert_to_blender_camera,
+        display_panel_groups,
+        miscellaneous_tools,
+        mmd_lamp_setup,
+        mmd_view,
+        model,
+        replace_bones_renaming,
+        reverse_japanese_english,
+        toon_modifier,
+        toon_textures_to_node_editor_shader,
+    )
 
 if bpy.app.version < (2, 80, 0):
     bl_info["blender"] = (2, 70, 0)
@@ -96,7 +99,7 @@ class MMDToolsHelperPanel(bpy.types.Panel):
     bl_idname = "OBJECT_PT_mmd_tools_helper"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS" if bpy.app.version < (2, 80, 0) else "UI"
-    bl_category = "mmd_tools_helper"
+    bl_category = "Helper"
 
     def draw(self, context):
         layout = self.layout

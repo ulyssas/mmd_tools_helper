@@ -1,8 +1,8 @@
-import bpy
 import math
 
-from . import register_wrap
-from . import model
+import bpy
+
+from . import model, register_wrap
 
 # def armature_diagnostic():
 # ENGLISH_LEG_BONES = ["knee_L", "knee_R", "ankle_L", "ankle_R", "toe_L", "toe_R"]
@@ -43,7 +43,7 @@ class Add_MMD_foot_leg_IK_Panel(bpy.types.Panel):
     bl_label = "Add foot leg IK to MMD model"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS" if bpy.app.version < (2, 80, 0) else "UI"
-    bl_category = "mmd_tools_helper"
+    bl_category = "Helper"
 
     def draw(self, context):
         layout = self.layout

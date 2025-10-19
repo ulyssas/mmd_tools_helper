@@ -1,8 +1,6 @@
 import bpy
 
-from . import register_wrap
-from . import model
-
+from . import model, register_wrap
 
 # Each image is a list of numbers(floats): R,G,B,A,R,G,B,A etc.
 # So the length of the list of pixels is 4 X number of pixels
@@ -17,7 +15,7 @@ class MMDToonTexturesToNodeEditorShaderPanel(bpy.types.Panel):
     bl_label = "MMD toon textures render using node editor "
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS" if bpy.app.version < (2, 80, 0) else "UI"
-    bl_category = "mmd_tools_helper"
+    bl_category = "Helper"
 
     def draw(self, context):
         layout = self.layout

@@ -1,8 +1,6 @@
 import bpy
 
-from . import register_wrap
-from . import model
-from . import import_csv
+from . import import_csv, model, register_wrap
 
 
 def __items(display_item_frame):
@@ -17,7 +15,7 @@ class MmdToolsDisplayPanelGroupsPanel(bpy.types.Panel):
     bl_label = "Create Display Panel Groups and Add Items"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS" if bpy.app.version < (2, 80, 0) else "UI"
-    bl_category = "mmd_tools_helper"
+    bl_category = "Helper"
 
     def draw(self, context):
         layout = self.layout

@@ -1,7 +1,6 @@
 import bpy
 
-from . import register_wrap
-from . import model
+from . import model, register_wrap
 
 
 @register_wrap
@@ -12,7 +11,7 @@ class BlenderToJapaneseBoneNamesPanel(bpy.types.Panel):
     bl_label = "Copy Blender bone names to Japanese bone names"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS" if bpy.app.version < (2, 80, 0) else "UI"
-    bl_category = "mmd_tools_helper"
+    bl_category = "Helper"
 
     def draw(self, context):
         layout = self.layout

@@ -1,7 +1,6 @@
 import bpy
 
-from . import register_wrap
-from . import model
+from . import model, register_wrap
 
 # blend_type
 # Type:	enum in ["MIX", "ADD", "MULTIPLY", "SUBTRACT", "SCREEN", "DIVIDE", "DIFFERENCE", "DARKEN", "LIGHTEN", "OVERLAY", "DODGE", "BURN", "HUE", "SATURATION", "VALUE", "COLOR", "SOFT_LIGHT", "LINEAR_LIGHT"], default ‘MIX’
@@ -15,7 +14,7 @@ class MMDToonModifierPanel(bpy.types.Panel):
     bl_label = "MMD toon modifier"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS" if bpy.app.version < (2, 80, 0) else "UI"
-    bl_category = "mmd_tools_helper"
+    bl_category = "Helper"
 
     def draw(self, context):
         layout = self.layout

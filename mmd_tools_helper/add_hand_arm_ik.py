@@ -1,8 +1,8 @@
-import bpy
 import math
 
-from . import register_wrap
-from . import model
+import bpy
+
+from . import model, register_wrap
 
 
 @register_wrap
@@ -13,7 +13,7 @@ class Add_MMD_Hand_Arm_IK_Panel(bpy.types.Panel):
     bl_label = "Add Hand Arm IK to MMD model"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS" if bpy.app.version < (2, 80, 0) else "UI"
-    bl_category = "mmd_tools_helper"
+    bl_category = "Helper"
 
     def draw(self, context):
         layout = self.layout

@@ -11,7 +11,7 @@ class MMDCameraToBlenderCameraPanel(bpy.types.Panel):
     bl_label = "Convert MMD Cameras to Blender cameras"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS" if bpy.app.version < (2, 80, 0) else "UI"
-    bl_category = "mmd_tools_helper"
+    bl_category = "Helper"
 
     def draw(self, context):
         layout = self.layout

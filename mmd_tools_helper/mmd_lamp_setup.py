@@ -11,7 +11,7 @@ class MMDLampSetupPanel(bpy.types.Panel):
     bl_label = "MMD Lamp Setup"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS" if bpy.app.version < (2, 80, 0) else "UI"
-    bl_category = "mmd_tools_helper"
+    bl_category = "Helper"
 
     def draw(self, context):
         layout = self.layout
