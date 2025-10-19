@@ -68,10 +68,10 @@ def main(context):
         else:
             lamp_objects = [ob for ob in bpy.context.scene.objects if ob.type == "LAMP"]
             o = lamp_objects[0]
-            bpy.context.scene.objects.active = o
+            bpy.context.view_layer.objects.active = o
             lamp_setup(o)
 
-    bpy.context.scene.objects.active = active_object
+    bpy.context.view_layer.objects.active = active_object
 
     # bpy.context.scene.world.ambient_color = (0.6, 0.6, 0.6)
 

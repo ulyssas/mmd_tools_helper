@@ -32,7 +32,9 @@ def main(context):
     SelectedBoneMap = bpy.context.scene.selected_armature_to_diagnose
     BoneMapIndex = BONE_NAMES_DICTIONARY[0].index(SelectedBoneMap)
     FingerBoneMapIndex = FINGER_BONE_NAMES_DICTIONARY[0].index(SelectedBoneMap)
-    bpy.context.scene.objects.active = model.findArmature(bpy.context.active_object)
+    bpy.context.view_layer.objects.active = model.findArmature(
+        bpy.context.active_object
+    )
     for b in BONE_NAMES_DICTIONARY:
         if BONE_NAMES_DICTIONARY.index(b) != 0:
             if b[BoneMapIndex] != "":
@@ -138,7 +140,9 @@ class ArmatureDiagnostic(bpy.types.Operator):
         return context.active_object is not None
 
     def execute(self, context):
-        bpy.context.scene.objects.active = model.findArmature(bpy.context.active_object)
+        bpy.context.view_layer.objects.active = model.findArmature(
+            bpy.context.active_object
+        )
         print()
         print()
         print(bpy.context.active_object.name, "all bone names")

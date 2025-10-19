@@ -59,7 +59,9 @@ class Add_MMD_foot_leg_IK_Panel(bpy.types.Panel):
 def clear_IK(context):
     IK_target_bones = []
     IK_target_tip_bones = []
-    bpy.context.scene.objects.active = model.findArmature(bpy.context.active_object)
+    bpy.context.view_layer.objects.active = model.findArmature(
+        bpy.context.active_object
+    )
     bpy.ops.object.mode_set(mode="POSE")
     english = ["knee_L", "knee_R", "ankle_L", "ankle_R", "toe_L", "toe_R"]
     japanese = ["左ひざ", "右ひざ", "左足首", "右足首", "左つま先", "右つま先"]
@@ -70,7 +72,7 @@ def clear_IK(context):
             for c in bpy.context.active_object.pose.bones[b].constraints:
                 if c.type == "IK":
                     print("c.target = ", c.target)
-                    if c.target == bpy.context.scene.objects.active:
+                    if c.target == bpy.context.view_layer.objects.active:
                         if c.subtarget is not None:
                             print("c.subtarget = ", c.subtarget)
                             if c.subtarget not in IK_target_bones:
@@ -100,7 +102,9 @@ def clear_IK(context):
 
 
 def main(context):
-    bpy.context.scene.objects.active = model.findArmature(bpy.context.active_object)
+    bpy.context.view_layer.objects.active = model.findArmature(
+        bpy.context.active_object
+    )
 
     # test japanese or english ("leg_R", "右足"), ("leg_L", "左足"),
     english = ["knee_L", "knee_R", "ankle_L", "ankle_R", "toe_L", "toe_R"]
@@ -118,9 +122,7 @@ def main(context):
     print("japanese_bones_L_R =", japanese_bones_L_R)
     print("\n\n")
 
-    assert (
-        english_bones or japanese_bones or japanese_bones_L_R
-    ), (
+    assert english_bones or japanese_bones or japanese_bones_L_R, (
         "This is not an MMD armature. MMD bone names of knee, ankle and toe bones are required for this script to run."
     )
 
@@ -499,7 +501,7 @@ def main(context):
         TOE_IK_RIGHT_BONE_TIP
     ].bone_group = bpy.context.active_object.pose.bone_groups["IK"]
 
-    bpy.context.active_object.data.draw_type = "OCTAHEDRAL"
+    bpy.context.active_object.data.display_type = "OCTAHEDRAL"
 
 
 @register_wrap

@@ -41,7 +41,7 @@ def main(context):
     for o in bpy.context.scene.objects:
         if o.type == "ARMATURE":
             o.data.show_names = True
-            bpy.context.scene.objects.active = o
+            bpy.context.view_layer.objects.active = o
             bpy.ops.object.mode_set(mode="POSE")
             for b in bpy.context.active_object.pose.bones:
                 name_j = b.mmd_bone.name_j

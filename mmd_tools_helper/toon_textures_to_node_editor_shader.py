@@ -112,11 +112,11 @@ def clear_material_nodes(context):
 def main(context):
     o = bpy.context.active_object
     if o.type == "MESH":
-        if len(bpy.data.lamps) == 0:
-            bpy.data.lamps.new("Lamp", "SUN")
+        if len(bpy.data.lights) == 0:
+            bpy.data.lights.new("Lamp", "SUN")
 
         for object in bpy.context.scene.objects:
-            if object.data == bpy.data.lamps[0]:
+            if object.data == bpy.data.lights[0]:
                 LAMP = object
 
         if o.data.materials is not None:
@@ -337,7 +337,7 @@ class MMDToonTexturesToNodeEditorShader(bpy.types.Operator):
         mesh_objects_list = model.find_MMD_MeshesList(bpy.context.active_object)
         assert mesh_objects_list is not None, "The active object is not an MMD model."
         for o in mesh_objects_list:
-            bpy.context.scene.objects.active = o
+            bpy.context.view_layer.objects.active = o
             clear_material_nodes(context)
             # create_default_material_nodes(context)
             main(context)

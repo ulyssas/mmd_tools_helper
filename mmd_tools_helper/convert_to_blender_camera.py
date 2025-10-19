@@ -45,7 +45,7 @@ def main(context):
 
     if camera.parent is not None:
         if camera.parent.mmd_type == "CAMERA":
-            bpy.context.scene.objects.unlink(camera.parent)
+            bpy.context.collection.objects.unlink(camera.parent)
             bpy.ops.object.parent_clear(type="CLEAR_KEEP_TRANSFORM")
 
 

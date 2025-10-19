@@ -28,12 +28,6 @@ class BonesRenamerPanel_MTH(bpy.types.Panel):
         row = layout.row()
 
 
-# use international fonts and display the names of the bones
-def use_international_fonts_display_names_bones():
-    bpy.context.user_preferences.system.use_international_fonts = True
-    bpy.context.object.data.show_names = True
-
-
 def unhide_all_armatures():
     for o in bpy.context.scene.objects:
         if o.type == "ARMATURE":
@@ -47,7 +41,9 @@ def print_missing_bone_names():
     SelectedBoneMap = bpy.context.scene.Destination_Armature_Type
     BoneMapIndex = BONE_NAMES_DICTIONARY[0].index(SelectedBoneMap)
     FingerBoneMapIndex = FINGER_BONE_NAMES_DICTIONARY[0].index(SelectedBoneMap)
-    bpy.context.scene.objects.active = model.findArmature(bpy.context.active_object)
+    bpy.context.view_layer.objects.active = model.findArmature(
+        bpy.context.active_object
+    )
     for b in BONE_NAMES_DICTIONARY:
         if BONE_NAMES_DICTIONARY.index(b) != 0:
             if b[BoneMapIndex] != "":
@@ -133,9 +129,10 @@ def rename_finger_bones(boneMap1, boneMap2, FINGER_BONE_NAMES_DICTIONARY):
 
 
 def main(context):
-    bpy.context.scene.objects.active = model.findArmature(bpy.context.active_object)
+    bpy.context.view_layer.objects.active = model.findArmature(
+        bpy.context.active_object
+    )
 
-    use_international_fonts_display_names_bones()
     unhide_all_armatures()
     BONE_NAMES_DICTIONARY = import_csv.use_csv_bones_dictionary()
     FINGER_BONE_NAMES_DICTIONARY = import_csv.use_csv_bones_fingers_dictionary()

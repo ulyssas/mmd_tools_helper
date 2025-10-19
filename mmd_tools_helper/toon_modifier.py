@@ -33,7 +33,7 @@ def main(context):
     # print("mesh_objects_list = ", mesh_objects_list)
     assert mesh_objects_list is not None, "The active object is not an MMD model."
     for o in mesh_objects_list:
-        bpy.context.scene.objects.active = o
+        bpy.context.view_layer.objects.active = o
         for m in bpy.context.active_object.data.materials:
             for n in m.node_tree.nodes:
                 if n.label == "toon_modifier":

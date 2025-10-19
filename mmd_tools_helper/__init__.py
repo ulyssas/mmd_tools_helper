@@ -1,5 +1,5 @@
 bl_info = {
-    "name": "MMD tools helper",
+    "name": "MMD Tools Helper",
     "author": "Hogarth-MMD",
     "version": (2, 4),
     "blender": (2, 80, 0),

@@ -30,8 +30,6 @@ class MMDViewPanel(bpy.types.Panel):
 def main(context):
     # bpy.context.scene.render.fps = 30
 
-    bpy.context.user_preferences.system.use_international_fonts = True
-
     camera_objects = [ob for ob in bpy.context.scene.objects if ob.type == "CAMERA"]
     if len(camera_objects) == 0:
         camera_data = bpy.data.cameras.new("Camera")
@@ -47,7 +45,7 @@ def main(context):
 
     o = bpy.context.scene.camera
     camera = o
-    bpy.context.scene.objects.active = camera
+    bpy.context.view_layer.objects.active = camera
     bpy.ops.mmd_tools.convert_to_mmd_camera(
         scale=1, bake_animation=False, camera_source="CURRENT", min_distance=0.1
     )
@@ -89,7 +87,7 @@ def main(context):
     # if o.type == "ARMATURE":
     # o.data.show_names = True
 
-    bpy.context.scene.objects.active = active_object
+    bpy.context.view_layer.objects.active = active_object
 
 
 @register_wrap

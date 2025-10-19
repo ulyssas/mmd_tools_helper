@@ -145,7 +145,9 @@ def delete_unused_vertex_groups():
 
 def test_is_mmd_english_armature():
     mmd_english = True
-    bpy.context.scene.objects.active = model.findArmature(bpy.context.active_object)
+    bpy.context.view_layer.objects.active = model.findArmature(
+        bpy.context.active_object
+    )
     mmd_english_test_bone_names = [
         "upper body",
         "neck",
@@ -246,20 +248,26 @@ def correct_root_center():
 def main(context):
     # print(bpy.context.scene.selected_miscellaneous_tools)
     if bpy.context.scene.selected_miscellaneous_tools == "combine_2_bones":
-        bpy.context.scene.objects.active = model.findArmature(bpy.context.active_object)
+        bpy.context.view_layer.objects.active = model.findArmature(
+            bpy.context.active_object
+        )
         parent_bone_name, child_bone_name = analyze_selected_parent_child_bone_pair()
         if parent_bone_name is not None:
             if child_bone_name is not None:
                 combine_2_vg_1_vg(parent_bone_name, child_bone_name)
                 combine_2_bones_1_bone(parent_bone_name, child_bone_name)
     if bpy.context.scene.selected_miscellaneous_tools == "delete_unused":
-        bpy.context.scene.objects.active = model.findArmature(bpy.context.active_object)
+        bpy.context.view_layer.objects.active = model.findArmature(
+            bpy.context.active_object
+        )
         delete_unused_bones()
         delete_unused_vertex_groups()
     if bpy.context.scene.selected_miscellaneous_tools == "mmd_ambient_white":
         all_materials_mmd_ambient_white()
     if bpy.context.scene.selected_miscellaneous_tools == "correct_root_center":
-        bpy.context.scene.objects.active = model.findArmature(bpy.context.active_object)
+        bpy.context.view_layer.objects.active = model.findArmature(
+            bpy.context.active_object
+        )
         correct_root_center()
 
 
