@@ -92,3 +92,8 @@ Added a new operator (button) "Copy Blender bone names to Japanese bone names".
 This operator is useful if you are doing a mass renaming of bones of a .pmx model which you have imported into Blender with mmd_tools. In that case, you should select "Copy Blender bone names to Japanese bone names" as the final step before exporting the model to a .pmx file.
 
 (When mmd_tools exports a .pmx model, it looks at the Japanese bone name of each bone. If a bone does not have a Japanese bone name, it copies the Blender bone name to be the Japanese bone name. But if the bone already has a Japanese bone name, the Japanese bone name stays the same, and all of the renaming of Blender bone names which you have done in Blender will be lost and will not be exported.)
+
+## Plan
+
+I will first make a version that only fixes any errors/non-functional parts.
+Then, I'll update addon UI and folder structure to make new version.
