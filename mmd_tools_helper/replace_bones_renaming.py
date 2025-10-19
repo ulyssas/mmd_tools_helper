@@ -37,15 +37,15 @@ class ReplaceBonesRenamingPanel(bpy.types.Panel):
 
 def main(context):
     bpy.context.scene.objects.active = model.findArmature(bpy.context.active_object)
-    if bpy.context.scene.bones_all_or_selected == True:
+    if bpy.context.scene.bones_all_or_selected:
         for b in bpy.context.active_object.data.bones:
-            if b.select == True:
+            if b.select:
                 if "dummy" not in b.name and "shadow" not in b.name:
                     b.name = b.name.replace(
                         bpy.context.scene.find_bone_string,
                         bpy.context.scene.replace_bone_string,
                     )
-    if bpy.context.scene.bones_all_or_selected == False:
+    if not bpy.context.scene.bones_all_or_selected:
         for b in bpy.context.active_object.data.bones:
             if "dummy" not in b.name and "shadow" not in b.name:
                 b.name = b.name.replace(

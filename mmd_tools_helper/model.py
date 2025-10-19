@@ -1,3 +1,5 @@
+"""Module for finding MMD model components in Blender objects."""
+
 import bpy
 
 

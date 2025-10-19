@@ -67,7 +67,7 @@ def analyze_selected_parent_child_bone_pair():
     selected_bones = []
 
     for b in bpy.context.active_object.pose.bones:
-        if b.bone.select == True:
+        if b.bone.select:
             selected_bones.append(b.bone.name)
 
     if len(selected_bones) != 2:
@@ -182,7 +182,7 @@ def test_is_mmd_english_armature():
 
 def correct_root_center():
     print("\n")
-    if test_is_mmd_english_armature() == True:
+    if test_is_mmd_english_armature():
         bpy.ops.object.mode_set(mode="EDIT")
 
         # if there is no "root" bone in the armature, a root bone is added
@@ -237,7 +237,7 @@ def correct_root_center():
                     "upper body"
                 ].parent = bpy.context.active_object.data.edit_bones["center"]
         bpy.ops.object.mode_set(mode="OBJECT")
-    if test_is_mmd_english_armature() == False:
+    if not test_is_mmd_english_armature():
         print(
             "This operator will only work on an armature with mmd_english bone names. First rename bones to mmd_english and then try running this operator again."
         )

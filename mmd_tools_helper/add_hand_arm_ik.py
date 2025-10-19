@@ -1,5 +1,3 @@
-import math
-
 import bpy
 
 from . import model, register_wrap
@@ -90,7 +88,7 @@ def armature_diagnostic():
         if b not in bpy.context.active_object.data.bones.keys():
             ENGLISH_OK = False
             print("This bone is not in this armature:", "\n", b)
-    if ENGLISH_OK == True:
+    if ENGLISH_OK:
         print("OK! All English-named bones are present which are needed to add hand IK")
 
     print("\n", "OR These Japanese bones are needed to add IK:", "\n")
@@ -99,7 +97,7 @@ def armature_diagnostic():
         if b not in bpy.context.active_object.data.bones.keys():
             JAPANESE_OK = False
             print("This bone is not in this armature:", "\n", b)
-    if JAPANESE_OK == True:
+    if JAPANESE_OK:
         print(
             "OK! All Japanese-named bones are present which are needed to add hand IK",
             "\n",

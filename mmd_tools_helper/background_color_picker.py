@@ -1,5 +1,3 @@
-import sys
-
 import bpy
 
 from . import register_wrap

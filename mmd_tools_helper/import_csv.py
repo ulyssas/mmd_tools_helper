@@ -1,4 +1,3 @@
-import bpy
 import csv
 
 # Each row read from the csv file is returned as a list of strings.

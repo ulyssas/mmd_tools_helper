@@ -315,7 +315,7 @@ def main(context):
                                 sphere_exists = True
                                 # bpy.data.textures[texture_name]["mmd_texture_type"] = "SPHERE"
 
-                if diffuse_texture_node.texture == None:
+                if diffuse_texture_node.texture is None:
                     # m.node_tree.links.new(mix_rgb_node.inputs['Color2'], material_node.outputs['Color'])
                     # m.use_shadeless = True
                     m.node_tree.links.remove(mix_rgb_node.inputs["Color2"].links[0])

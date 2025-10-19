@@ -119,7 +119,7 @@ def main(context):
     print("\n\n")
 
     assert (
-        english_bones == True or japanese_bones == True or japanese_bones_L_R == True
+        english_bones or japanese_bones or japanese_bones_L_R
     ), (
         "This is not an MMD armature. MMD bone names of knee, ankle and toe bones are required for this script to run."
     )
@@ -140,9 +140,9 @@ def main(context):
     ]
     ik_bones = any([ik in keys for ik in IK_BONE_NAMES])
 
-    assert ik_bones == False, "This armature already has MMD IK bone names."
+    assert not ik_bones, "This armature already has MMD IK bone names."
 
-    if english_bones == True:
+    if english_bones:
         LEG_IK_LEFT_BONE = "leg IK_L"
         LEG_IK_RIGHT_BONE = "leg IK_R"
         TOE_IK_LEFT_BONE = "toe IK_L"
@@ -153,7 +153,7 @@ def main(context):
         TOE_IK_RIGHT_BONE_TIP = "toe IK_R_t"
         ROOT = "root"
 
-    if japanese_bones == True or japanese_bones_L_R == True:
+    if japanese_bones or japanese_bones_L_R:
         LEG_IK_LEFT_BONE = "左足ＩＫ"
         LEG_IK_RIGHT_BONE = "右足ＩＫ"
         TOE_IK_LEFT_BONE = "左つま先ＩＫ"
