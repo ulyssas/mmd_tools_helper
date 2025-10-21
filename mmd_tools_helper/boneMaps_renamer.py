@@ -41,17 +41,12 @@ def print_missing_bone_names():
     SelectedBoneMap = bpy.context.scene.Destination_Armature_Type
     BoneMapIndex = BONE_NAMES_DICTIONARY[0].index(SelectedBoneMap)
     FingerBoneMapIndex = FINGER_BONE_NAMES_DICTIONARY[0].index(SelectedBoneMap)
-    bpy.context.view_layer.objects.active = model.findArmature(
-        bpy.context.active_object
-    )
+    bpy.context.view_layer.objects.active = model.findArmature(bpy.context.active_object)
     for b in BONE_NAMES_DICTIONARY:
         if BONE_NAMES_DICTIONARY.index(b) != 0:
             if b[BoneMapIndex] != "":
                 if b[BoneMapIndex] not in ["upper body 2", "上半身2"]:
-                    if (
-                        b[BoneMapIndex]
-                        not in bpy.context.active_object.data.bones.keys()
-                    ):
+                    if b[BoneMapIndex] not in bpy.context.active_object.data.bones.keys():
                         missing_bone_names.append(b[BoneMapIndex])
     for b in FINGER_BONE_NAMES_DICTIONARY:
         if FINGER_BONE_NAMES_DICTIONARY.index(b) != 0:
@@ -64,16 +59,11 @@ def print_missing_bone_names():
                     "右親指0",
                     "親指0.R",
                 ]:
-                    if (
-                        b[FingerBoneMapIndex]
-                        not in bpy.context.active_object.data.bones.keys()
-                    ):
+                    if b[FingerBoneMapIndex] not in bpy.context.active_object.data.bones.keys():
                         missing_bone_names.append(b[FingerBoneMapIndex])
     print("\nBones renaming destination bone map was:")
     print(SelectedBoneMap)
-    print(
-        "These bone names of", SelectedBoneMap, "are missing from the active armature:"
-    )
+    print("These bone names of", SelectedBoneMap, "are missing from the active armature:")
     print(missing_bone_names)
 
 
@@ -86,18 +76,14 @@ def rename_bones(boneMap1, boneMap2, BONE_NAMES_DICTIONARY):
     for k in BONE_NAMES_DICTIONARY[1:]:
         if k[boneMap1_index] in bpy.context.active_object.data.bones.keys():
             if k[boneMap2_index] != "":
-                bpy.context.active_object.data.bones[k[boneMap1_index]].name = k[
-                    boneMap2_index
-                ]
+                bpy.context.active_object.data.bones[k[boneMap1_index]].name = k[boneMap2_index]
                 if boneMap2 == "mmd_japanese" or boneMap2 == "mmd_japaneseLR":
                     bpy.ops.object.mode_set(mode="POSE")
                     if hasattr(
                         bpy.context.active_object.pose.bones[k[boneMap2_index]],
                         "mmd_bone",
                     ):
-                        bpy.context.active_object.pose.bones[
-                            k[boneMap2_index]
-                        ].mmd_bone.name_e = k[0]
+                        bpy.context.active_object.pose.bones[k[boneMap2_index]].mmd_bone.name_e = k[0]
                     bpy.ops.object.mode_set(mode="OBJECT")
 
 
@@ -110,18 +96,14 @@ def rename_finger_bones(boneMap1, boneMap2, FINGER_BONE_NAMES_DICTIONARY):
     for k in FINGER_BONE_NAMES_DICTIONARY[1:]:
         if k[boneMap1_index] in bpy.context.active_object.data.bones.keys():
             if k[boneMap2_index] != "":
-                bpy.context.active_object.data.bones[k[boneMap1_index]].name = k[
-                    boneMap2_index
-                ]
+                bpy.context.active_object.data.bones[k[boneMap1_index]].name = k[boneMap2_index]
                 if boneMap2 == "mmd_japanese" or boneMap2 == "mmd_japaneseLR":
                     bpy.ops.object.mode_set(mode="POSE")
                     if hasattr(
                         bpy.context.active_object.pose.bones[k[boneMap2_index]],
                         "mmd_bone",
                     ):
-                        bpy.context.active_object.pose.bones[
-                            k[boneMap2_index]
-                        ].mmd_bone.name_e = k[0]
+                        bpy.context.active_object.pose.bones[k[boneMap2_index]].mmd_bone.name_e = k[0]
                     bpy.ops.object.mode_set(mode="OBJECT")
 
     bpy.context.scene.Origin_Armature_Type = boneMap2
@@ -129,9 +111,7 @@ def rename_finger_bones(boneMap1, boneMap2, FINGER_BONE_NAMES_DICTIONARY):
 
 
 def main(context):
-    bpy.context.view_layer.objects.active = model.findArmature(
-        bpy.context.active_object
-    )
+    bpy.context.view_layer.objects.active = model.findArmature(bpy.context.active_object)
 
     unhide_all_armatures()
     BONE_NAMES_DICTIONARY = import_csv.use_csv_bones_dictionary()

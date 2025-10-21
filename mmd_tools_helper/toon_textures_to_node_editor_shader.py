@@ -47,14 +47,10 @@ def toon_image_to_color_ramp(toon_texture_color_ramp, toon_image):
     toon_texture_color_ramp.color_ramp.elements[-1].color = toon_image_gradient[-1]
 
     for i in range(1, len(toon_image_gradient) - 2, 1):
-        toon_texture_color_ramp.color_ramp.elements.new(
-            i / (len(toon_image_gradient) - 1)
-        )
+        toon_texture_color_ramp.color_ramp.elements.new(i / (len(toon_image_gradient) - 1))
         toon_texture_color_ramp.color_ramp.elements[i].color = toon_image_gradient[i]
         if i > len(toon_image_gradient) / 2:
-            toon_texture_color_ramp.color_ramp.elements[i].color[3] = (
-                0.0  # alpha of non-shadow colors set to 0.0
-            )
+            toon_texture_color_ramp.color_ramp.elements[i].color[3] = 0.0  # alpha of non-shadow colors set to 0.0
 
     return
 
@@ -188,57 +184,37 @@ def main(context):
                 mix_rgb_node_add_sphere.inputs[0].default_value = 1.0
                 mix_rgb_node_add_sphere.location = (1240, 470)
 
-                diffuse_texture_geomety_uv_node = m.node_tree.nodes.new(
-                    "ShaderNodeGeometry"
-                )
+                diffuse_texture_geomety_uv_node = m.node_tree.nodes.new("ShaderNodeGeometry")
                 diffuse_texture_geomety_uv_node.location = (620, 250)
 
                 diffuse_texture_node = m.node_tree.nodes.new("ShaderNodeTexture")
                 diffuse_texture_node.location = (820, 250)
 
-                sphere_texture_geometry_normal_node = m.node_tree.nodes.new(
-                    "ShaderNodeGeometry"
-                )
+                sphere_texture_geometry_normal_node = m.node_tree.nodes.new("ShaderNodeGeometry")
                 sphere_texture_geometry_normal_node.location = (620, -50)
 
                 sphere_texture_node = m.node_tree.nodes.new("ShaderNodeTexture")
                 sphere_texture_node.location = (820, -50)
 
                 print(len(m.node_tree.links))
-                m.node_tree.links.new(
-                    output_node.inputs["Alpha"], material_node.outputs["Alpha"]
-                )
+                m.node_tree.links.new(output_node.inputs["Alpha"], material_node.outputs["Alpha"])
                 print(len(m.node_tree.links))
-                m.node_tree.links.new(
-                    vector_math_node.inputs[0], material_node.outputs["Normal"]
-                )  # vector_math_node.inputs['Vector']
+                m.node_tree.links.new(vector_math_node.inputs[0], material_node.outputs["Normal"])  # vector_math_node.inputs['Vector']
                 print(len(m.node_tree.links))
-                m.node_tree.links.new(
-                    vector_math_node.inputs[1], lamp_node.outputs["Light Vector"]
-                )  # vector_math_node.inputs['Vector']
+                m.node_tree.links.new(vector_math_node.inputs[1], lamp_node.outputs["Light Vector"])  # vector_math_node.inputs['Vector']
                 print(len(m.node_tree.links))
-                m.node_tree.links.new(
-                    rgb_to_bw.inputs["Color"], lamp_node.outputs["Shadow"]
-                )  # math_node_3.inputs['Value']
+                m.node_tree.links.new(rgb_to_bw.inputs["Color"], lamp_node.outputs["Shadow"])  # math_node_3.inputs['Value']
                 print(len(m.node_tree.links))
                 m.node_tree.links.new(math_node_3.inputs[1], rgb_to_bw.outputs["Val"])
 
                 print(len(m.node_tree.links))
-                m.node_tree.links.new(
-                    math_node_1.inputs[0], vector_math_node.outputs["Value"]
-                )  # math_node_1.inputs['Value']
+                m.node_tree.links.new(math_node_1.inputs[0], vector_math_node.outputs["Value"])  # math_node_1.inputs['Value']
                 print(len(m.node_tree.links))
-                m.node_tree.links.new(
-                    math_node_2.inputs["Value"], math_node_1.outputs["Value"]
-                )
+                m.node_tree.links.new(math_node_2.inputs["Value"], math_node_1.outputs["Value"])
                 print(len(m.node_tree.links))
-                m.node_tree.links.new(
-                    math_node_3.inputs[0], math_node_2.outputs["Value"]
-                )  # math_node_3.inputs['Value']
+                m.node_tree.links.new(math_node_3.inputs[0], math_node_2.outputs["Value"])  # math_node_3.inputs['Value']
                 print(len(m.node_tree.links))
-                m.node_tree.links.new(
-                    toon_texture_color_ramp.inputs["Fac"], math_node_3.outputs["Value"]
-                )
+                m.node_tree.links.new(toon_texture_color_ramp.inputs["Fac"], math_node_3.outputs["Value"])
                 print(len(m.node_tree.links))
                 m.node_tree.links.new(
                     mix_rgb_node_ramp_overlay.inputs["Color1"],
@@ -271,9 +247,7 @@ def main(context):
                     diffuse_texture_geomety_uv_node.outputs["UV"],
                 )
                 print(len(m.node_tree.links))
-                m.node_tree.links.new(
-                    mix_rgb_node.inputs["Color2"], diffuse_texture_node.outputs["Color"]
-                )
+                m.node_tree.links.new(mix_rgb_node.inputs["Color2"], diffuse_texture_node.outputs["Color"])
                 print(len(m.node_tree.links))
                 m.node_tree.links.new(
                     sphere_texture_node.inputs["Vector"],
@@ -290,9 +264,7 @@ def main(context):
                         if m.texture_slots[t] is not None:
                             texture_name = m.texture_slots[t].texture.name
                             if t == 0:
-                                diffuse_texture_node.texture = bpy.data.textures[
-                                    texture_name
-                                ]
+                                diffuse_texture_node.texture = bpy.data.textures[texture_name]
                                 diffuse_exists = True
                                 # bpy.data.textures[texture_name]["mmd_texture_type"] = "DIFFUSE"
                             if t == 1:
@@ -306,12 +278,8 @@ def main(context):
                                     # bpy.data.textures[texture_name]["mmd_texture_type"] = "TOON"
                                     # bpy.context.active_object.data.materials[0].texture_slots[1].texture.image.name
                             if t == 2:
-                                mix_rgb_node_add_sphere.blend_type = m.texture_slots[
-                                    t
-                                ].blend_type
-                                sphere_texture_node.texture = bpy.data.textures[
-                                    texture_name
-                                ]
+                                mix_rgb_node_add_sphere.blend_type = m.texture_slots[t].blend_type
+                                sphere_texture_node.texture = bpy.data.textures[texture_name]
                                 sphere_exists = True
                                 # bpy.data.textures[texture_name]["mmd_texture_type"] = "SPHERE"
 

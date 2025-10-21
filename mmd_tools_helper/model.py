@@ -46,9 +46,7 @@ def meshes(root):
     if arm is None:
         return []
     else:
-        return filter(
-            lambda x: x.type == "MESH" and x.mmd_type == "NONE", allObjects(arm, root)
-        )
+        return filter(lambda x: x.type == "MESH" and x.mmd_type == "NONE", allObjects(arm, root))
 
 
 def find_MMD_Armature(obj):

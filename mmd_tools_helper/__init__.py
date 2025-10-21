@@ -17,9 +17,7 @@ def register_wrap(cls):
     # print('%3d'%len(__bl_classes), cls)
     # assert(cls not in __bl_classes)
     if __make_annotations:
-        bl_props = {
-            k: v for k, v in cls.__dict__.items() if isinstance(v, __bpy_property)
-        }
+        bl_props = {k: v for k, v in cls.__dict__.items() if isinstance(v, __bpy_property)}
         if bl_props:
             if "__annotations__" not in cls.__dict__:
                 setattr(cls, "__annotations__", {})
@@ -61,11 +59,7 @@ else:
     import bpy
 
     __make_annotations = bpy.app.version >= (2, 80, 0)
-    __bpy_property = (
-        bpy.props._PropertyDeferred
-        if hasattr(bpy.props, "_PropertyDeferred")
-        else tuple
-    )
+    __bpy_property = bpy.props._PropertyDeferred if hasattr(bpy.props, "_PropertyDeferred") else tuple
     from . import (
         add_foot_leg_ik,
         add_hand_arm_ik,

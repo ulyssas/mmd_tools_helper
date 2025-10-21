@@ -36,9 +36,7 @@ def combine_2_bones_1_bone(parent_bone_name, child_bone_name):
     bpy.ops.object.mode_set(mode="EDIT")
     child_bone_tail = bpy.context.active_object.data.edit_bones[child_bone_name].tail
     bpy.context.active_object.data.edit_bones[parent_bone_name].tail = child_bone_tail
-    bpy.context.active_object.data.edit_bones.remove(
-        bpy.context.active_object.data.edit_bones[child_bone_name]
-    )
+    bpy.context.active_object.data.edit_bones.remove(bpy.context.active_object.data.edit_bones[child_bone_name])
     bpy.ops.object.mode_set(mode="POSE")
     print("Combined 2 bones: ", parent_bone_name, child_bone_name)
 
@@ -50,10 +48,7 @@ def combine_2_vg_1_vg(parent_vg_name, child_vg_name):
                 if child_vg_name in o.vertex_groups.keys():
                     for v in o.data.vertices:
                         for g in v.groups:
-                            if (
-                                o.vertex_groups[g.group]
-                                == o.vertex_groups[child_vg_name]
-                            ):
+                            if o.vertex_groups[g.group] == o.vertex_groups[child_vg_name]:
                                 o.vertex_groups[parent_vg_name].add(
                                     [v.index],
                                     o.vertex_groups[child_vg_name].weight(v.index),
@@ -74,37 +69,23 @@ def analyze_selected_parent_child_bone_pair():
         print("Exactly 2 bones must be selected.", len(selected_bones), "are selected.")
         return None, None
     if len(selected_bones) == 2:
-        if (
-            bpy.context.active_object.data.bones[selected_bones[0]].parent
-            == bpy.context.active_object.data.bones[selected_bones[1]]
-        ):
+        if bpy.context.active_object.data.bones[selected_bones[0]].parent == bpy.context.active_object.data.bones[selected_bones[1]]:
             parent_bone_name = selected_bones[1]
             child_bone_name = selected_bones[0]
             return parent_bone_name, child_bone_name
             # combine_2_bones_1_bone(parent_bone, child_bone)
             # combine_2_vg_1_vg(parent_bone, child_bone)
 
-        if (
-            bpy.context.active_object.data.bones[selected_bones[1]].parent
-            == bpy.context.active_object.data.bones[selected_bones[0]]
-        ):
+        if bpy.context.active_object.data.bones[selected_bones[1]].parent == bpy.context.active_object.data.bones[selected_bones[0]]:
             parent_bone_name = selected_bones[0]
             child_bone_name = selected_bones[1]
             return parent_bone_name, child_bone_name
             # combine_2_bones_1_bone(parent_bone, child_bone)
             # combine_2_vg_1_vg(parent_bone, child_bone)
 
-        if (
-            bpy.context.active_object.data.bones[selected_bones[0]].parent
-            != bpy.context.active_object.data.bones[selected_bones[1]]
-        ):
-            if (
-                bpy.context.active_object.data.bones[selected_bones[1]].parent
-                != bpy.context.active_object.data.bones[selected_bones[0]]
-            ):
-                print(
-                    "Combining 2 bones to 1 bone requires a parent-child bone pair to be selected. There is no parent-child relationship between the 2 selected bones."
-                )
+        if bpy.context.active_object.data.bones[selected_bones[0]].parent != bpy.context.active_object.data.bones[selected_bones[1]]:
+            if bpy.context.active_object.data.bones[selected_bones[1]].parent != bpy.context.active_object.data.bones[selected_bones[0]]:
+                print("Combining 2 bones to 1 bone requires a parent-child bone pair to be selected. There is no parent-child relationship between the 2 selected bones.")
                 return None, None
 
     bpy.ops.object.mode_set(mode="POSE")
@@ -120,9 +101,7 @@ def delete_unused_bones():
             bones_to_be_deleted.append(b.name)
 
     for b in bones_to_be_deleted:
-        bpy.context.active_object.data.edit_bones.remove(
-            bpy.context.active_object.data.edit_bones[b]
-        )
+        bpy.context.active_object.data.edit_bones.remove(bpy.context.active_object.data.edit_bones[b])
         print("removed bone  ", b)
 
     bpy.ops.object.mode_set(mode="POSE")
@@ -145,9 +124,7 @@ def delete_unused_vertex_groups():
 
 def test_is_mmd_english_armature():
     mmd_english = True
-    bpy.context.view_layer.objects.active = model.findArmature(
-        bpy.context.active_object
-    )
+    bpy.context.view_layer.objects.active = model.findArmature(bpy.context.active_object)
     mmd_english_test_bone_names = [
         "upper body",
         "neck",
@@ -193,9 +170,7 @@ def correct_root_center():
             root_bone.head[:] = (0, 0, 0)
             root_bone.tail[:] = (0, 0, 1)
             if "center" in bpy.context.active_object.data.edit_bones.keys():
-                bpy.context.active_object.data.edit_bones[
-                    "center"
-                ].parent = bpy.context.active_object.data.edit_bones["root"]
+                bpy.context.active_object.data.edit_bones["center"].parent = bpy.context.active_object.data.edit_bones["root"]
                 bpy.context.active_object.data.edit_bones["center"].use_connect = False
             print("Added MMD root bone.")
         bpy.ops.object.mode_set(mode="OBJECT")
@@ -208,13 +183,7 @@ def correct_root_center():
                     bpy.context.active_object.data.bones["center"].name = "lower body"
                     print("Renamed center bone to lower body bone.")
                     bpy.ops.object.mode_set(mode="EDIT")
-                    bpy.context.active_object.data.edit_bones["lower body"].tail.z = (
-                        0.5
-                        * (
-                            bpy.context.active_object.data.edit_bones["leg_L"].head.z
-                            + bpy.context.active_object.data.edit_bones["leg_R"].head.z
-                        )
-                    )
+                    bpy.context.active_object.data.edit_bones["lower body"].tail.z = 0.5 * (bpy.context.active_object.data.edit_bones["leg_L"].head.z + bpy.context.active_object.data.edit_bones["leg_R"].head.z)
         bpy.ops.object.mode_set(mode="OBJECT")
 
         # if there is no "center" bone in the armature, a center bone is added
@@ -223,51 +192,36 @@ def correct_root_center():
             center_bone = bpy.context.active_object.data.edit_bones.new("center")
             print("Added center bone.")
             center_bone.head = 0.25 * (
-                bpy.context.active_object.data.edit_bones["knee_L"].head
-                + bpy.context.active_object.data.edit_bones["knee_R"].head
-                + bpy.context.active_object.data.edit_bones["leg_L"].head
-                + bpy.context.active_object.data.edit_bones["leg_R"].head
+                bpy.context.active_object.data.edit_bones["knee_L"].head + bpy.context.active_object.data.edit_bones["knee_R"].head + bpy.context.active_object.data.edit_bones["leg_L"].head + bpy.context.active_object.data.edit_bones["leg_R"].head
             )
             center_bone.tail.z = center_bone.head.z - 1
             center_bone.parent = bpy.context.active_object.data.edit_bones["root"]
             if "lower body" in bpy.context.active_object.data.edit_bones.keys():
-                bpy.context.active_object.data.edit_bones[
-                    "lower body"
-                ].parent = bpy.context.active_object.data.edit_bones["center"]
+                bpy.context.active_object.data.edit_bones["lower body"].parent = bpy.context.active_object.data.edit_bones["center"]
             if "upper body" in bpy.context.active_object.data.edit_bones.keys():
-                bpy.context.active_object.data.edit_bones[
-                    "upper body"
-                ].parent = bpy.context.active_object.data.edit_bones["center"]
+                bpy.context.active_object.data.edit_bones["upper body"].parent = bpy.context.active_object.data.edit_bones["center"]
         bpy.ops.object.mode_set(mode="OBJECT")
     if not test_is_mmd_english_armature():
-        print(
-            "This operator will only work on an armature with mmd_english bone names. First rename bones to mmd_english and then try running this operator again."
-        )
+        print("This operator will only work on an armature with mmd_english bone names. First rename bones to mmd_english and then try running this operator again.")
 
 
 def main(context):
     # print(bpy.context.scene.selected_miscellaneous_tools)
     if bpy.context.scene.selected_miscellaneous_tools == "combine_2_bones":
-        bpy.context.view_layer.objects.active = model.findArmature(
-            bpy.context.active_object
-        )
+        bpy.context.view_layer.objects.active = model.findArmature(bpy.context.active_object)
         parent_bone_name, child_bone_name = analyze_selected_parent_child_bone_pair()
         if parent_bone_name is not None:
             if child_bone_name is not None:
                 combine_2_vg_1_vg(parent_bone_name, child_bone_name)
                 combine_2_bones_1_bone(parent_bone_name, child_bone_name)
     if bpy.context.scene.selected_miscellaneous_tools == "delete_unused":
-        bpy.context.view_layer.objects.active = model.findArmature(
-            bpy.context.active_object
-        )
+        bpy.context.view_layer.objects.active = model.findArmature(bpy.context.active_object)
         delete_unused_bones()
         delete_unused_vertex_groups()
     if bpy.context.scene.selected_miscellaneous_tools == "mmd_ambient_white":
         all_materials_mmd_ambient_white()
     if bpy.context.scene.selected_miscellaneous_tools == "correct_root_center":
-        bpy.context.view_layer.objects.active = model.findArmature(
-            bpy.context.active_object
-        )
+        bpy.context.view_layer.objects.active = model.findArmature(bpy.context.active_object)
         correct_root_center()
 
 

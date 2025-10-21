@@ -25,17 +25,13 @@ class MmdToolsDisplayPanelGroupsPanel(bpy.types.Panel):
         row = layout.row()
         layout.prop(context.scene, "display_panel_options")
         row = layout.row()
-        row.operator(
-            "object.add_display_panel_groups", text="Add MMD display panel items"
-        )
+        row.operator("object.add_display_panel_groups", text="Add MMD display panel items")
         row = layout.row()
 
 
 def delete_empty_display_panel_groups(root):
     bpy.context.view_layer.objects.active = root
-    for d in range(
-        len(bpy.context.active_object.mmd_root.display_item_frames) - 1, 1, -1
-    ):
+    for d in range(len(bpy.context.active_object.mmd_root.display_item_frames) - 1, 1, -1):
         # if bpy.context.active_object.mmd_root.display_item_frames[d].name != "Root" and bpy.context.active_object.mmd_root.display_item_frames[d].name != "表情":
         if len(__items(bpy.context.active_object.mmd_root.display_item_frames[d])) == 0:
             bpy.context.active_object.mmd_root.display_item_frames.remove(d)
@@ -80,9 +76,7 @@ def display_panel_groups_from_bone_groups(root, armature_object):
             group.name = bg
             group.name_e = bg
     for bgb in bone_groups_of_bones:
-        item = __items(
-            bpy.context.active_object.mmd_root.display_item_frames[bgb[1]]
-        ).add()
+        item = __items(bpy.context.active_object.mmd_root.display_item_frames[bgb[1]]).add()
         item.name = bgb[0]
         item.name_e = bgb[0]
 
@@ -226,9 +220,7 @@ def display_panel_groups_create(root, armature_object):
                 if n in b:
                     if b not in __items(root.mmd_root.display_item_frames[g[0]]).keys():
                         if b not in items_added:
-                            item = __items(
-                                root.mmd_root.display_item_frames[g[0]]
-                            ).add()
+                            item = __items(root.mmd_root.display_item_frames[g[0]]).add()
                             item.name = b
                             items_added.append(b)
 
@@ -262,10 +254,7 @@ def main(context):
 
     if bpy.context.scene.display_panel_options == "no_change":
         pass
-    if (
-        bpy.context.scene.display_panel_options
-        == "display_panel_groups_from_bone_groups"
-    ):
+    if bpy.context.scene.display_panel_options == "display_panel_groups_from_bone_groups":
         clear_display_panel_groups(root)
         display_panel_groups_from_bone_groups(root, armature_object)
         display_panel_groups_from_shape_keys(mesh_objects_list)

@@ -26,9 +26,7 @@ class Add_MMD_Hand_Arm_IK_Panel(bpy.types.Panel):
 def clear_IK(context):
     IK_target_bones = []
     IK_target_tip_bones = []
-    bpy.context.view_layer.objects.active = model.findArmature(
-        bpy.context.active_object
-    )
+    bpy.context.view_layer.objects.active = model.findArmature(bpy.context.active_object)
     bpy.ops.object.mode_set(mode="POSE")
     english = ["elbow_L", "elbow_R", "wrist_L", "wrist_R", "middle1_L", "middle1_R"]
     japanese = ["左ひじ", "右ひじ", "左手首", "右手首", "左中指１", "右中指１"]
@@ -53,9 +51,7 @@ def clear_IK(context):
     print("bones to be deleted = ", bones_to_be_deleted)
     bpy.ops.object.mode_set(mode="EDIT")
     for b in bones_to_be_deleted:
-        bpy.context.active_object.data.edit_bones.remove(
-            bpy.context.active_object.data.edit_bones[b]
-        )
+        bpy.context.active_object.data.edit_bones.remove(bpy.context.active_object.data.edit_bones[b])
     bpy.ops.object.mode_set(mode="POSE")
     for b in bpy.context.active_object.pose.bones.keys():
         if b in arm_hand_bones:
@@ -116,9 +112,7 @@ def armature_diagnostic():
 
 
 def main(context):
-    bpy.context.view_layer.objects.active = model.findArmature(
-        bpy.context.active_object
-    )
+    bpy.context.view_layer.objects.active = model.findArmature(bpy.context.active_object)
 
     # Lists of possible names of elbow, wrist and middle1 bones
     ARM_LEFT_BONE = ["左ひじ", "ひじ.L", "elbow_L"]
@@ -151,12 +145,8 @@ def main(context):
             print("WRIST_RIGHT = ", WRIST_RIGHT)
 
     # measurements of the length of the elbow bone which will used to calculate the lengths of the IK bones.
-    DOUBLE_LENGTH_OF_ELBOW_BONE = (
-        bpy.context.active_object.data.bones[ELBOW_LEFT].length * 2
-    )
-    TWENTIETH_LENGTH_OF_ELBOW_BONE = (
-        bpy.context.active_object.data.bones[ELBOW_LEFT].length * 0.05
-    )
+    DOUBLE_LENGTH_OF_ELBOW_BONE = bpy.context.active_object.data.bones[ELBOW_LEFT].length * 2
+    TWENTIETH_LENGTH_OF_ELBOW_BONE = bpy.context.active_object.data.bones[ELBOW_LEFT].length * 0.05
 
     bpy.ops.object.mode_set(mode="EDIT")
 
@@ -166,26 +156,17 @@ def main(context):
     bone = bpy.context.active_object.data.edit_bones.new("elbow_IK_L")
     bone.head = bpy.context.active_object.data.edit_bones[ELBOW_LEFT].head
     bone.tail = bpy.context.active_object.data.edit_bones[ELBOW_LEFT].head
-    bone.tail.z = (
-        bpy.context.active_object.data.edit_bones[ELBOW_LEFT].head.z
-        - DOUBLE_LENGTH_OF_ELBOW_BONE
-    )
+    bone.tail.z = bpy.context.active_object.data.edit_bones[ELBOW_LEFT].head.z - DOUBLE_LENGTH_OF_ELBOW_BONE
 
     bone = bpy.context.active_object.data.edit_bones.new("elbow_IK_R")
     bone.head = bpy.context.active_object.data.edit_bones[ELBOW_RIGHT].head
     bone.tail = bpy.context.active_object.data.edit_bones[ELBOW_RIGHT].head
-    bone.tail.z = (
-        bpy.context.active_object.data.edit_bones[ELBOW_RIGHT].head.z
-        - DOUBLE_LENGTH_OF_ELBOW_BONE
-    )
+    bone.tail.z = bpy.context.active_object.data.edit_bones[ELBOW_RIGHT].head.z - DOUBLE_LENGTH_OF_ELBOW_BONE
 
     bone = bpy.context.active_object.data.edit_bones.new("middle1_IK_L")
     bone.head = bpy.context.active_object.data.edit_bones[WRIST_LEFT].head
     bone.tail = bpy.context.active_object.data.edit_bones[WRIST_LEFT].head
-    bone.tail.z = (
-        bpy.context.active_object.data.edit_bones[WRIST_LEFT].head.z
-        - DOUBLE_LENGTH_OF_ELBOW_BONE
-    )
+    bone.tail.z = bpy.context.active_object.data.edit_bones[WRIST_LEFT].head.z - DOUBLE_LENGTH_OF_ELBOW_BONE
     print("bone = ", bone)
     bone.parent = bpy.context.active_object.data.edit_bones["elbow_IK_L"]
     bone.use_connect = False
@@ -193,10 +174,7 @@ def main(context):
     bone = bpy.context.active_object.data.edit_bones.new("middle1_IK_R")
     bone.head = bpy.context.active_object.data.edit_bones[WRIST_RIGHT].head
     bone.tail = bpy.context.active_object.data.edit_bones[WRIST_RIGHT].head
-    bone.tail.z = (
-        bpy.context.active_object.data.edit_bones[WRIST_RIGHT].head.z
-        - DOUBLE_LENGTH_OF_ELBOW_BONE
-    )
+    bone.tail.z = bpy.context.active_object.data.edit_bones[WRIST_RIGHT].head.z - DOUBLE_LENGTH_OF_ELBOW_BONE
     bone.parent = bpy.context.active_object.data.edit_bones["elbow_IK_R"]
     bone.use_connect = False
 
@@ -210,9 +188,7 @@ def main(context):
     bpy.context.active_object.pose.bones["elbow_IK_L_t"].bone.hide = True
     if hasattr(bpy.context.active_object.pose.bones["elbow_IK_L_t"], "mmd_bone"):
         bpy.context.active_object.pose.bones["elbow_IK_L_t"].mmd_bone.is_visible = False
-        bpy.context.active_object.pose.bones[
-            "elbow_IK_L_t"
-        ].mmd_bone.is_controllable = False
+        bpy.context.active_object.pose.bones["elbow_IK_L_t"].mmd_bone.is_controllable = False
         bpy.context.active_object.pose.bones["elbow_IK_L_t"].mmd_bone.is_tip = True
     bpy.ops.object.mode_set(mode="EDIT")
 
@@ -226,9 +202,7 @@ def main(context):
     bpy.context.active_object.pose.bones["elbow_IK_R_t"].bone.hide = True
     if hasattr(bpy.context.active_object.pose.bones["elbow_IK_R_t"], "mmd_bone"):
         bpy.context.active_object.pose.bones["elbow_IK_R_t"].mmd_bone.is_visible = False
-        bpy.context.active_object.pose.bones[
-            "elbow_IK_R_t"
-        ].mmd_bone.is_controllable = False
+        bpy.context.active_object.pose.bones["elbow_IK_R_t"].mmd_bone.is_controllable = False
         bpy.context.active_object.pose.bones["elbow_IK_R_t"].mmd_bone.is_tip = True
     bpy.ops.object.mode_set(mode="EDIT")
 
@@ -241,12 +215,8 @@ def main(context):
     bpy.ops.object.mode_set(mode="POSE")
     bpy.context.active_object.pose.bones["middle1_IK_L_t"].bone.hide = True
     if hasattr(bpy.context.active_object.pose.bones["middle1_IK_L_t"], "mmd_bone"):
-        bpy.context.active_object.pose.bones[
-            "middle1_IK_L_t"
-        ].mmd_bone.is_visible = False
-        bpy.context.active_object.pose.bones[
-            "middle1_IK_L_t"
-        ].mmd_bone.is_controllable = False
+        bpy.context.active_object.pose.bones["middle1_IK_L_t"].mmd_bone.is_visible = False
+        bpy.context.active_object.pose.bones["middle1_IK_L_t"].mmd_bone.is_controllable = False
         bpy.context.active_object.pose.bones["middle1_IK_L_t"].mmd_bone.is_tip = True
     bpy.ops.object.mode_set(mode="EDIT")
 
@@ -259,12 +229,8 @@ def main(context):
     bpy.ops.object.mode_set(mode="POSE")
     bpy.context.active_object.pose.bones["middle1_IK_R_t"].bone.hide = True
     if hasattr(bpy.context.active_object.pose.bones["middle1_IK_R_t"], "mmd_bone"):
-        bpy.context.active_object.pose.bones[
-            "middle1_IK_R_t"
-        ].mmd_bone.is_visible = False
-        bpy.context.active_object.pose.bones[
-            "middle1_IK_R_t"
-        ].mmd_bone.is_controllable = False
+        bpy.context.active_object.pose.bones["middle1_IK_R_t"].mmd_bone.is_visible = False
+        bpy.context.active_object.pose.bones["middle1_IK_R_t"].mmd_bone.is_controllable = False
         bpy.context.active_object.pose.bones["middle1_IK_R_t"].mmd_bone.is_tip = True
     bpy.ops.object.mode_set(mode="EDIT")
 
@@ -272,9 +238,7 @@ def main(context):
 
     # Adds IK constraints
     bpy.context.object.pose.bones[ARM_LEFT].constraints.new("IK")
-    bpy.context.object.pose.bones[ARM_LEFT].constraints[
-        "IK"
-    ].target = bpy.context.active_object
+    bpy.context.object.pose.bones[ARM_LEFT].constraints["IK"].target = bpy.context.active_object
     bpy.context.object.pose.bones[ARM_LEFT].constraints["IK"].subtarget = "elbow_IK_L"
     bpy.context.object.pose.bones[ARM_LEFT].constraints["IK"].chain_count = 2
     bpy.context.object.pose.bones[ARM_LEFT].constraints["IK"].use_tail = True
@@ -289,9 +253,7 @@ def main(context):
     # bpy.context.object.pose.bones[ARM_LEFT].constraints["Limit Rotation"].name = "mmd_ik_limit_override"
 
     bpy.context.object.pose.bones[ARM_RIGHT].constraints.new("IK")
-    bpy.context.object.pose.bones[ARM_RIGHT].constraints[
-        "IK"
-    ].target = bpy.context.active_object
+    bpy.context.object.pose.bones[ARM_RIGHT].constraints["IK"].target = bpy.context.active_object
     bpy.context.object.pose.bones[ARM_RIGHT].constraints["IK"].subtarget = "elbow_IK_R"
     bpy.context.object.pose.bones[ARM_RIGHT].constraints["IK"].chain_count = 2
     bpy.context.object.pose.bones[ARM_RIGHT].constraints["IK"].use_tail = True
@@ -312,12 +274,8 @@ def main(context):
     # bpy.context.object.pose.bones[ELBOW_LEFT].constraints["Damped Track"].name = "mmd_ik_target_override"
 
     bpy.context.object.pose.bones[ELBOW_LEFT].constraints.new("IK")
-    bpy.context.object.pose.bones[ELBOW_LEFT].constraints[
-        "IK"
-    ].target = bpy.context.active_object
-    bpy.context.object.pose.bones[ELBOW_LEFT].constraints[
-        "IK"
-    ].subtarget = "middle1_IK_L"
+    bpy.context.object.pose.bones[ELBOW_LEFT].constraints["IK"].target = bpy.context.active_object
+    bpy.context.object.pose.bones[ELBOW_LEFT].constraints["IK"].subtarget = "middle1_IK_L"
     bpy.context.object.pose.bones[ELBOW_LEFT].constraints["IK"].chain_count = 1
     bpy.context.object.pose.bones[ELBOW_LEFT].constraints["IK"].use_tail = True
     bpy.context.object.pose.bones[ELBOW_LEFT].constraints["IK"].iterations = 6
@@ -330,59 +288,31 @@ def main(context):
     # bpy.context.object.pose.bones[ELBOW_RIGHT].constraints["Damped Track"].name = "mmd_ik_target_override"
 
     bpy.context.object.pose.bones[ELBOW_RIGHT].constraints.new("IK")
-    bpy.context.object.pose.bones[ELBOW_RIGHT].constraints[
-        "IK"
-    ].target = bpy.context.active_object
-    bpy.context.object.pose.bones[ELBOW_RIGHT].constraints[
-        "IK"
-    ].subtarget = "middle1_IK_R"
+    bpy.context.object.pose.bones[ELBOW_RIGHT].constraints["IK"].target = bpy.context.active_object
+    bpy.context.object.pose.bones[ELBOW_RIGHT].constraints["IK"].subtarget = "middle1_IK_R"
     bpy.context.object.pose.bones[ELBOW_RIGHT].constraints["IK"].chain_count = 1
     bpy.context.object.pose.bones[ELBOW_RIGHT].constraints["IK"].use_tail = True
     bpy.context.object.pose.bones[ELBOW_RIGHT].constraints["IK"].iterations = 6
     # bpy.context.object.pose.bones[WRIST_RIGHT].constraints["IK"].use_location = False
 
     if hasattr(bpy.context.object.pose.bones[ARM_RIGHT], "mmd_bone"):
-        bpy.context.object.pose.bones[
-            ARM_RIGHT
-        ].mmd_bone.ik_rotation_constraint = 2  # 180*2/math.pi
-        bpy.context.object.pose.bones[
-            ARM_LEFT
-        ].mmd_bone.ik_rotation_constraint = 2  # 180*2/math.pi
-        bpy.context.object.pose.bones[
-            ELBOW_RIGHT
-        ].mmd_bone.ik_rotation_constraint = 4  # 180*4/math.pi
-        bpy.context.object.pose.bones[
-            ELBOW_LEFT
-        ].mmd_bone.ik_rotation_constraint = 4  # 180*4/math.pi
+        bpy.context.object.pose.bones[ARM_RIGHT].mmd_bone.ik_rotation_constraint = 2  # 180*2/math.pi
+        bpy.context.object.pose.bones[ARM_LEFT].mmd_bone.ik_rotation_constraint = 2  # 180*2/math.pi
+        bpy.context.object.pose.bones[ELBOW_RIGHT].mmd_bone.ik_rotation_constraint = 4  # 180*4/math.pi
+        bpy.context.object.pose.bones[ELBOW_LEFT].mmd_bone.ik_rotation_constraint = 4  # 180*4/math.pi
 
     # create an 'IK' bone group and add the IK bones to it
     if "IK" not in bpy.context.active_object.pose.bone_groups.keys():
         bpy.context.active_object.pose.bone_groups.new(name="IK")
 
-    bpy.context.active_object.pose.bones[
-        "elbow_IK_L"
-    ].bone_group = bpy.context.active_object.pose.bone_groups["IK"]
-    bpy.context.active_object.pose.bones[
-        "elbow_IK_R"
-    ].bone_group = bpy.context.active_object.pose.bone_groups["IK"]
-    bpy.context.active_object.pose.bones[
-        "middle1_IK_L"
-    ].bone_group = bpy.context.active_object.pose.bone_groups["IK"]
-    bpy.context.active_object.pose.bones[
-        "middle1_IK_R"
-    ].bone_group = bpy.context.active_object.pose.bone_groups["IK"]
-    bpy.context.active_object.pose.bones[
-        "elbow_IK_L_t"
-    ].bone_group = bpy.context.active_object.pose.bone_groups["IK"]
-    bpy.context.active_object.pose.bones[
-        "elbow_IK_R_t"
-    ].bone_group = bpy.context.active_object.pose.bone_groups["IK"]
-    bpy.context.active_object.pose.bones[
-        "middle1_IK_L_t"
-    ].bone_group = bpy.context.active_object.pose.bone_groups["IK"]
-    bpy.context.active_object.pose.bones[
-        "middle1_IK_R_t"
-    ].bone_group = bpy.context.active_object.pose.bone_groups["IK"]
+    bpy.context.active_object.pose.bones["elbow_IK_L"].bone_group = bpy.context.active_object.pose.bone_groups["IK"]
+    bpy.context.active_object.pose.bones["elbow_IK_R"].bone_group = bpy.context.active_object.pose.bone_groups["IK"]
+    bpy.context.active_object.pose.bones["middle1_IK_L"].bone_group = bpy.context.active_object.pose.bone_groups["IK"]
+    bpy.context.active_object.pose.bones["middle1_IK_R"].bone_group = bpy.context.active_object.pose.bone_groups["IK"]
+    bpy.context.active_object.pose.bones["elbow_IK_L_t"].bone_group = bpy.context.active_object.pose.bone_groups["IK"]
+    bpy.context.active_object.pose.bones["elbow_IK_R_t"].bone_group = bpy.context.active_object.pose.bone_groups["IK"]
+    bpy.context.active_object.pose.bones["middle1_IK_L_t"].bone_group = bpy.context.active_object.pose.bone_groups["IK"]
+    bpy.context.active_object.pose.bones["middle1_IK_R_t"].bone_group = bpy.context.active_object.pose.bone_groups["IK"]
 
 
 @register_wrap

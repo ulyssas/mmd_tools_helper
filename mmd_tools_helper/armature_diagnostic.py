@@ -32,17 +32,12 @@ def main(context):
     SelectedBoneMap = bpy.context.scene.selected_armature_to_diagnose
     BoneMapIndex = BONE_NAMES_DICTIONARY[0].index(SelectedBoneMap)
     FingerBoneMapIndex = FINGER_BONE_NAMES_DICTIONARY[0].index(SelectedBoneMap)
-    bpy.context.view_layer.objects.active = model.findArmature(
-        bpy.context.active_object
-    )
+    bpy.context.view_layer.objects.active = model.findArmature(bpy.context.active_object)
     for b in BONE_NAMES_DICTIONARY:
         if BONE_NAMES_DICTIONARY.index(b) != 0:
             if b[BoneMapIndex] != "":
                 if b[BoneMapIndex] not in ["upper body 2", "上半身2"]:
-                    if (
-                        b[BoneMapIndex]
-                        not in bpy.context.active_object.data.bones.keys()
-                    ):
+                    if b[BoneMapIndex] not in bpy.context.active_object.data.bones.keys():
                         missing_bone_names.append(b[BoneMapIndex])
     for b in FINGER_BONE_NAMES_DICTIONARY:
         if FINGER_BONE_NAMES_DICTIONARY.index(b) != 0:
@@ -55,21 +50,14 @@ def main(context):
                     "右親指0",
                     "親指0.R",
                 ]:
-                    if (
-                        b[FingerBoneMapIndex]
-                        not in bpy.context.active_object.data.bones.keys()
-                    ):
+                    if b[FingerBoneMapIndex] not in bpy.context.active_object.data.bones.keys():
                         missing_bone_names.append(b[FingerBoneMapIndex])
     print("\nSelected diagnostic bone map is:")
     print(SelectedBoneMap)
-    print(
-        "These bone names of", SelectedBoneMap, "are missing from the active armature:"
-    )
+    print("These bone names of", SelectedBoneMap, "are missing from the active armature:")
     print(missing_bone_names)
     if SelectedBoneMap == "mmd_english":
-        print(
-            "Please note that these 3 bones are MMD semi-standard bones and are not essential in an MMD armature:"
-        )
+        print("Please note that these 3 bones are MMD semi-standard bones and are not essential in an MMD armature:")
         print("upper body 2, thumb0_L, thumb0_R")
 
 
@@ -140,19 +128,11 @@ class ArmatureDiagnostic(bpy.types.Operator):
         return context.active_object is not None
 
     def execute(self, context):
-        bpy.context.view_layer.objects.active = model.findArmature(
-            bpy.context.active_object
-        )
+        bpy.context.view_layer.objects.active = model.findArmature(bpy.context.active_object)
         print()
         print()
         print(bpy.context.active_object.name, "all bone names")
-        print(
-            [
-                b
-                for b in bpy.context.active_object.data.bones.keys()
-                if "dummy" not in b and "shadow" not in b
-            ]
-        )
+        print([b for b in bpy.context.active_object.data.bones.keys() if "dummy" not in b and "shadow" not in b])
         print()
         main(context)
         return {"FINISHED"}
