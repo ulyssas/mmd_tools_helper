@@ -8,11 +8,9 @@ def __items(display_item_frame):
 
 
 @register_wrap
-class MmdToolsDisplayPanelGroupsPanel(bpy.types.Panel):
-    """Mass add bone names and shape key names to display panel groups"""
-
+class MMDDisplayFrameGroupsPanel(bpy.types.Panel):
     bl_idname = "OBJECT_PT_mmd_add_display_panel_groups"
-    bl_label = "Create Display Panel Groups and Add Items"
+    bl_label = "Display Frame"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Helper"
@@ -21,11 +19,11 @@ class MmdToolsDisplayPanelGroupsPanel(bpy.types.Panel):
         layout = self.layout
         row = layout.row()
 
-        row.label(text="Add MMD Display Panel Groups", icon="ARMATURE_DATA")
+        row.label(text="Display Frame", icon="ARMATURE_DATA")
         row = layout.row()
         layout.prop(context.scene, "display_panel_options")
         row = layout.row()
-        row.operator("object.add_display_panel_groups", text="Add MMD display panel items")
+        row.operator("mmd_tools_helper.add_display_frames", text="Add display panel items")
         row = layout.row()
 
 
@@ -269,11 +267,10 @@ def main(context):
 
 
 @register_wrap
-class MmdToolsDisplayPanelGroups(bpy.types.Operator):
-    """Mass add bone names and shape key names to display panel groups"""
-
-    bl_idname = "object.add_display_panel_groups"
-    bl_label = "Create Display Panel Groups and Add Items"
+class MMDDisplayFrameGroups(bpy.types.Operator):
+    bl_idname = "mmd_tools_helper.add_display_frames"
+    bl_label = "Create display frames and add items"
+    bl_description = "Add bone names and shape key names to display frames in bulk"
     bl_options = {"REGISTER", "UNDO"}
 
     bpy.types.Scene.display_panel_options = bpy.props.EnumProperty(
@@ -290,7 +287,7 @@ class MmdToolsDisplayPanelGroups(bpy.types.Operator):
                 "Display panel groups and items are created and added by this add-on",
             ),
         ],
-        name="MMD Display Panel Groups :",
+        name="Display Frame",
         default="no_change",
     )
 

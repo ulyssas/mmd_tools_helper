@@ -4,11 +4,9 @@ from . import import_csv, model, register_wrap
 
 
 @register_wrap
-class BonesRenamerPanel_MTH(bpy.types.Panel):
-    """Creates the Bones Renamer Panel in a VIEW_3D TOOLS tab"""
-
-    bl_label = "Bones Renamer"
-    bl_idname = "OBJECT_PT_bones_renamer_MTH"
+class BonesRenamerPanel(bpy.types.Panel):
+    bl_idname = "OBJECT_PT_bones_renamer"
+    bl_label = "Batch rename bones"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Helper"
@@ -17,14 +15,13 @@ class BonesRenamerPanel_MTH(bpy.types.Panel):
         layout = self.layout
         row = layout.row()
 
-        row.label(text="Mass Rename Bones", icon="ARMATURE_DATA")
+        row.label(text="Batch rename bones", icon="ARMATURE_DATA")
         row = layout.row()
+        layout.prop(context.scene, "origin_armature_type")
         row = layout.row()
-        layout.prop(context.scene, "Origin_Armature_Type")
+        layout.prop(context.scene, "destination_armature_type")
         row = layout.row()
-        layout.prop(context.scene, "Destination_Armature_Type")
-        row = layout.row()
-        row.operator("object.bones_renamer", text="Mass Rename Bones")
+        row.operator("mmd_tools_helper.bone_batch_renamer", text="Batch rename bones")
         row = layout.row()
 
 
@@ -38,7 +35,7 @@ def print_missing_bone_names():
     missing_bone_names = []
     BONE_NAMES_DICTIONARY = import_csv.use_csv_bones_dictionary()
     FINGER_BONE_NAMES_DICTIONARY = import_csv.use_csv_bones_fingers_dictionary()
-    SelectedBoneMap = bpy.context.scene.Destination_Armature_Type
+    SelectedBoneMap = bpy.context.scene.destination_armature_type
     BoneMapIndex = BONE_NAMES_DICTIONARY[0].index(SelectedBoneMap)
     FingerBoneMapIndex = FINGER_BONE_NAMES_DICTIONARY[0].index(SelectedBoneMap)
     bpy.context.view_layer.objects.active = model.findArmature(bpy.context.active_object)
@@ -106,7 +103,7 @@ def rename_finger_bones(boneMap1, boneMap2, FINGER_BONE_NAMES_DICTIONARY):
                         bpy.context.active_object.pose.bones[k[boneMap2_index]].mmd_bone.name_e = k[0]
                     bpy.ops.object.mode_set(mode="OBJECT")
 
-    bpy.context.scene.Origin_Armature_Type = boneMap2
+    bpy.context.scene.origin_armature_type = boneMap2
     print_missing_bone_names()
 
 
@@ -117,13 +114,13 @@ def main(context):
     BONE_NAMES_DICTIONARY = import_csv.use_csv_bones_dictionary()
     FINGER_BONE_NAMES_DICTIONARY = import_csv.use_csv_bones_fingers_dictionary()
     rename_bones(
-        bpy.context.scene.Origin_Armature_Type,
-        bpy.context.scene.Destination_Armature_Type,
+        bpy.context.scene.origin_armature_type,
+        bpy.context.scene.destination_armature_type,
         BONE_NAMES_DICTIONARY,
     )
     rename_finger_bones(
-        bpy.context.scene.Origin_Armature_Type,
-        bpy.context.scene.Destination_Armature_Type,
+        bpy.context.scene.origin_armature_type,
+        bpy.context.scene.destination_armature_type,
         FINGER_BONE_NAMES_DICTIONARY,
     )
     bpy.ops.object.mode_set(mode="POSE")
@@ -132,13 +129,12 @@ def main(context):
 
 @register_wrap
 class BonesRenamer(bpy.types.Operator):
-    """Mass bones renamer for armature conversion"""
-
-    bl_idname = "object.bones_renamer"
-    bl_label = "Bones Renamer"
+    bl_idname = "mmd_tools_helper.bone_batch_renamer"
+    bl_label = "Batch rename bones"
+    bl_description = "Batch rename bones for armature conversion"
     bl_options = {"REGISTER", "UNDO"}
 
-    bpy.types.Scene.Origin_Armature_Type = bpy.props.EnumProperty(
+    bpy.types.Scene.origin_armature_type = bpy.props.EnumProperty(
         items=[
             (
                 "mmd_english",
@@ -189,11 +185,11 @@ class BonesRenamer(bpy.types.Operator):
             ("valvebiped", "ValveBiped bone names", "ValveBiped bone names"),
             ("iClone7", "iClone7 bone names", "iClone7 bone names"),
         ],
-        name="Rename  bones  from :",
+        name="From",
         default="mmd_japanese",
     )
 
-    bpy.types.Scene.Destination_Armature_Type = bpy.props.EnumProperty(
+    bpy.types.Scene.destination_armature_type = bpy.props.EnumProperty(
         items=[
             (
                 "mmd_english",
@@ -244,7 +240,7 @@ class BonesRenamer(bpy.types.Operator):
             ("valvebiped", "ValveBiped bone names", "ValveBiped bone names"),
             ("iClone7", "iClone7 bone names", "iClone7 bone names"),
         ],
-        name="Rename  bones  to :",
+        name="To",
         default="mmd_english",
     )
 

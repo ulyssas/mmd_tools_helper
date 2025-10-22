@@ -4,11 +4,9 @@ from . import register_wrap
 
 
 @register_wrap
-class MMDCameraToBlenderCameraPanel(bpy.types.Panel):
-    """Convert MMD cameras back to Blender cameras"""
-
+class MMDCameraToBlenderPanel(bpy.types.Panel):
     bl_idname = "OBJECT_PT_mmd_camera_to_blender_camera"
-    bl_label = "Convert MMD Cameras to Blender cameras"
+    bl_label = "MMD Camera to Blender"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Helper"
@@ -18,10 +16,7 @@ class MMDCameraToBlenderCameraPanel(bpy.types.Panel):
         row = layout.row()
 
         row = layout.row()
-        row.operator(
-            "mmd_tools_helper.mmd_camera_to_blender_camera",
-            text="Convert MMD cameras to Blender cameras",
-        )
+        row.operator("mmd_tools_helper.mmd_camera_to_blender", text="Convert MMD Camera")
         row = layout.row()
 
 
@@ -50,11 +45,10 @@ def main(context):
 
 
 @register_wrap
-class MMDCameraToBlenderCamera(bpy.types.Operator):
-    """Convert MMD cameras back to Blender cameras"""
-
-    bl_idname = "mmd_tools_helper.mmd_camera_to_blender_camera"
-    bl_label = "Convert MMD Cameras to Blender cameras"
+class MMDCameraToBlender(bpy.types.Operator):
+    bl_idname = "mmd_tools_helper.mmd_camera_to_blender"
+    bl_label = "Convert MMD Camera to Blender"
+    bl_description = "Convert MMD camera to Blender camera"
     bl_options = {"REGISTER", "UNDO"}
 
     # @classmethod

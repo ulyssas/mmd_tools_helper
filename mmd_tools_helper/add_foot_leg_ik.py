@@ -36,11 +36,9 @@ from . import model, register_wrap
 
 
 @register_wrap
-class Add_MMD_foot_leg_IK_Panel(bpy.types.Panel):
-    """Add foot and leg IK bones and constraints to MMD model"""
-
+class AddMMDLegIKPanel(bpy.types.Panel):
     bl_idname = "OBJECT_PT_mmd_add_foot_leg_ik"
-    bl_label = "Add foot leg IK to MMD model"
+    bl_label = "Add leg IK to MMD model"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Helper"
@@ -49,10 +47,9 @@ class Add_MMD_foot_leg_IK_Panel(bpy.types.Panel):
         layout = self.layout
         row = layout.row()
 
-        row.label(text="Add leg and foot IK to MMD model", icon="ARMATURE_DATA")
+        row.label(text="Add leg IK to MMD model", icon="ARMATURE_DATA")
         row = layout.row()
-        row.operator("object.add_foot_leg_ik", text="Add leg and foot IK to MMD model")
-        row = layout.row()
+        row.operator("mmd_tools_helper.add_leg_ik", text="Add leg IK")
         row = layout.row()
 
 
@@ -389,11 +386,10 @@ def main(context):
 
 
 @register_wrap
-class Add_MMD_foot_leg_IK(bpy.types.Operator):
-    """Add foot and leg IK bones and constraints to MMD model"""
-
-    bl_idname = "object.add_foot_leg_ik"
-    bl_label = "Add foot leg IK to MMD model"
+class AddMMDLegIK(bpy.types.Operator):
+    bl_idname = "mmd_tools_helper.add_leg_ik"
+    bl_label = "Add leg IK to MMD model"
+    bl_description = "Add foot and leg IK bones and constraints to active MMD model"
     bl_options = {"REGISTER", "UNDO"}
 
     @classmethod

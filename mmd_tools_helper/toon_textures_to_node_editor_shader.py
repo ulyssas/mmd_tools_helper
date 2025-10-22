@@ -8,11 +8,9 @@ from . import model, register_wrap
 
 
 @register_wrap
-class MMDToonTexturesToNodeEditorShaderPanel(bpy.types.Panel):
-    """Sets up nodes in Blender node editor for rendering toon textures"""
-
+class MMDToonTexToShaderPanel(bpy.types.Panel):
     bl_idname = "OBJECT_PT_mmd_toon_render_node_editor"
-    bl_label = "MMD toon textures render using node editor "
+    bl_label = "MMD Toon to Toon Shader"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Helper"
@@ -21,12 +19,9 @@ class MMDToonTexturesToNodeEditorShaderPanel(bpy.types.Panel):
         layout = self.layout
         row = layout.row()
 
-        row.label(text="MMD Render toon textures", icon="MATERIAL")
+        row.label(text="MMD Toon to Toon Shader", icon="MATERIAL")
         row = layout.row()
-        row.operator(
-            "mmd_tools_helper.mmd_toon_render_node_editor",
-            text="MMD Create Toon Material Nodes",
-        )
+        row.operator("mmd_tools_helper.mmd_toon_shader", text="Convert to Toon Shader")
         row = layout.row()
 
 
@@ -166,11 +161,10 @@ def main(context):
 
 
 @register_wrap
-class MMDToonTexturesToNodeEditorShader(bpy.types.Operator):
-    """Sets up nodes in Blender node editor for rendering toon textures"""
-
-    bl_idname = "mmd_tools_helper.mmd_toon_render_node_editor"
-    bl_label = "MMD toon textures render using node editor "
+class MMDToonTexToShader(bpy.types.Operator):
+    bl_idname = "mmd_tools_helper.mmd_toon_shader"
+    bl_label = "Convert MMD Toon to Toon Shader"
+    bl_description = "Sets up nodes in Blender node editor for rendering toon textures"
     bl_options = {"REGISTER", "UNDO"}
 
     # @classmethod

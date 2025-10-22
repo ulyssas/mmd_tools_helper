@@ -4,11 +4,9 @@ from . import model, register_wrap
 
 
 @register_wrap
-class Add_MMD_Hand_Arm_IK_Panel(bpy.types.Panel):
-    """Add hand and arm IK bones and constraints to active MMD model"""
-
+class AddMMDArmIKPanel(bpy.types.Panel):
     bl_idname = "OBJECT_PT_mmd_add_hand_arm_ik"
-    bl_label = "Add Hand Arm IK to MMD model"
+    bl_label = "Add arm IK to MMD model"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Helper"
@@ -17,9 +15,9 @@ class Add_MMD_Hand_Arm_IK_Panel(bpy.types.Panel):
         layout = self.layout
         row = layout.row()
 
-        row.label(text="Add hand arm IK to MMD model", icon="ARMATURE_DATA")
+        row.label(text="Add arm IK to MMD model", icon="ARMATURE_DATA")
         row = layout.row()
-        row.operator("object.add_hand_arm_ik", text="Add hand_arm IK to MMD model")
+        row.operator("mmd_tools_helper.add_arm_ik", text="Add arm IK")
         row = layout.row()
 
 
@@ -316,11 +314,10 @@ def main(context):
 
 
 @register_wrap
-class Add_MMD_Hand_Arm_IK(bpy.types.Operator):
-    """Add hand and arm IK bones and constraints to active MMD model"""
-
-    bl_idname = "object.add_hand_arm_ik"
-    bl_label = "Add Hand Arm IK to MMD model"
+class AddMMDArmIK(bpy.types.Operator):
+    bl_idname = "mmd_tools_helper.add_arm_ik"
+    bl_label = "Add arm IK to MMD model"
+    bl_description = "Add hand and arm IK bones and constraints to active MMD model"
     bl_options = {"REGISTER", "UNDO"}
 
     @classmethod

@@ -4,11 +4,9 @@ from . import register_wrap
 
 
 @register_wrap
-class ReverseJapaneseEnglishPanel(bpy.types.Panel):
-    """Sets up nodes in Blender node editor for rendering toon textures"""
-
+class SwapJapaneseEnglishPanel(bpy.types.Panel):
     bl_idname = "OBJECT_PT_reverse_japanese_english"
-    bl_label = "Reverse Japanese English names"
+    bl_label = "Swap Japanese & English names"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Helper"
@@ -17,12 +15,9 @@ class ReverseJapaneseEnglishPanel(bpy.types.Panel):
         layout = self.layout
         row = layout.row()
 
-        row.label(text="Reverse Japanese English names", icon="TEXT")
+        row.label(text="Swap Japanese & English names", icon="TEXT")
         row = layout.row()
-        row.operator(
-            "mmd_tools_helper.reverse_japanese_english",
-            text="Reverse Japanese English names",
-        )
+        row.operator("mmd_tools_helper.swap_japanese_english", text="Swap Japanese & English")
         row = layout.row()
 
 
@@ -64,11 +59,10 @@ def main(context):
 
 
 @register_wrap
-class ReverseJapaneseEnglish(bpy.types.Operator):
-    """Reverses Japanese and English names of shape keys, materials, bones"""
-
-    bl_idname = "mmd_tools_helper.reverse_japanese_english"
-    bl_label = "Reverse Japanese English names of MMD model"
+class SwapJapaneseEnglish(bpy.types.Operator):
+    bl_idname = "mmd_tools_helper.swap_japanese_english"
+    bl_label = "Swap Japanese and English names"
+    bl_description = "Swap Japanese and English names of shape keys, materials, bones"
     bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):

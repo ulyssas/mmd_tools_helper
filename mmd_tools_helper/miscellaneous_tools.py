@@ -5,10 +5,8 @@ from . import model, register_wrap
 
 @register_wrap
 class MiscellaneousToolsPanel(bpy.types.Panel):
-    """Miscellaneous Tools panel"""
-
-    bl_label = "Miscellaneous Tools Panel"
     bl_idname = "OBJECT_PT_miscellaneous_tools"
+    bl_label = "Miscellaneous Tools"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Helper"
@@ -17,11 +15,11 @@ class MiscellaneousToolsPanel(bpy.types.Panel):
         layout = self.layout
 
         row = layout.row()
-        layout.prop(context.scene, "selected_miscellaneous_tools")
+        layout.prop(context.scene, "selected_misc_tools")
         row = layout.row()
         row.label(text="Miscellaneous Tools", icon="WORLD_DATA")
         row = layout.row()
-        row.operator("mmd_tools_helper.miscellaneous_tools", text="Execute Function")
+        row.operator("mmd_tools_helper.misc_tools", text="Execute")
 
 
 def all_materials_mmd_ambient_white():
@@ -206,34 +204,32 @@ def correct_root_center():
 
 
 def main(context):
-    # print(bpy.context.scene.selected_miscellaneous_tools)
-    if bpy.context.scene.selected_miscellaneous_tools == "combine_2_bones":
+    # print(bpy.context.scene.selected_misc_tools)
+    if bpy.context.scene.selected_misc_tools == "combine_2_bones":
         bpy.context.view_layer.objects.active = model.findArmature(bpy.context.active_object)
         parent_bone_name, child_bone_name = analyze_selected_parent_child_bone_pair()
         if parent_bone_name is not None:
             if child_bone_name is not None:
                 combine_2_vg_1_vg(parent_bone_name, child_bone_name)
                 combine_2_bones_1_bone(parent_bone_name, child_bone_name)
-    if bpy.context.scene.selected_miscellaneous_tools == "delete_unused":
+    if bpy.context.scene.selected_misc_tools == "delete_unused":
         bpy.context.view_layer.objects.active = model.findArmature(bpy.context.active_object)
         delete_unused_bones()
         delete_unused_vertex_groups()
-    if bpy.context.scene.selected_miscellaneous_tools == "mmd_ambient_white":
+    if bpy.context.scene.selected_misc_tools == "mmd_ambient_white":
         all_materials_mmd_ambient_white()
-    if bpy.context.scene.selected_miscellaneous_tools == "correct_root_center":
+    if bpy.context.scene.selected_misc_tools == "correct_root_center":
         bpy.context.view_layer.objects.active = model.findArmature(bpy.context.active_object)
         correct_root_center()
 
 
 @register_wrap
 class MiscellaneousTools(bpy.types.Operator):
-    """Miscellanous Tools"""
-
-    bl_idname = "mmd_tools_helper.miscellaneous_tools"
+    bl_idname = "mmd_tools_helper.misc_tools"
     bl_label = "Miscellaneous Tools"
     bl_options = {"REGISTER", "UNDO"}
 
-    bpy.types.Scene.selected_miscellaneous_tools = bpy.props.EnumProperty(
+    bpy.types.Scene.selected_misc_tools = bpy.props.EnumProperty(
         items=[
             ("none", "none", "none"),
             (
@@ -257,7 +253,7 @@ class MiscellaneousTools(bpy.types.Operator):
                 "Correct MMD root and center bones",
             ),
         ],
-        name="Select Function:",
+        name="Select function",
         default="none",
     )
 

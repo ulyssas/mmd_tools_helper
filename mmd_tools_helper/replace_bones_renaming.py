@@ -4,10 +4,8 @@ from . import model, register_wrap
 
 
 @register_wrap
-class ReplaceBonesRenamingPanel(bpy.types.Panel):
-    """Replace Bones Renaming panel"""
-
-    bl_label = "Replace bones renaming panel"
+class FindReplaceBonesPanel(bpy.types.Panel):
+    bl_label = "Replace String"
     bl_idname = "OBJECT_PT_replace_bones_renaming"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
@@ -16,11 +14,7 @@ class ReplaceBonesRenamingPanel(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         row = layout.row()
-        row.label(text="Find this string in bone names:")
-        row = layout.row()
         row.prop(context.scene, "find_bone_string")
-        row = layout.row()
-        row.label(text="Replace it with this string:")
         row = layout.row()
         row.prop(context.scene, "replace_bone_string")
         row = layout.row()
@@ -28,10 +22,7 @@ class ReplaceBonesRenamingPanel(bpy.types.Panel):
         row = layout.row()
         row.label(text="Selected bones only")
         row = layout.row()
-        row.operator(
-            "mmd_tools_helper.replace_bones_renaming",
-            text="Find and replace a string in bone names",
-        )
+        row.operator("mmd_tools_helper.find_replace_bones", text="Find & replace string in bone names")
         row = layout.row()
 
 
@@ -55,15 +46,14 @@ def main(context):
 
 
 @register_wrap
-class ReplaceBonesRenaming(bpy.types.Operator):
-    """Find and replace mass renaming of bones"""
-
-    bl_idname = "mmd_tools_helper.replace_bones_renaming"
-    bl_label = "Replace bones renaming"
+class FindReplaceBones(bpy.types.Operator):
+    bl_idname = "mmd_tools_helper.find_replace_bones"
+    bl_label = "Find and replace bone names"
+    bl_description = "Find and replace strings in bone names"
     bl_options = {"REGISTER", "UNDO"}
 
     bpy.types.Scene.find_bone_string = bpy.props.StringProperty(
-        name="",
+        name="From",
         description="",
         default="",
         maxlen=0,
@@ -75,7 +65,7 @@ class ReplaceBonesRenaming(bpy.types.Operator):
     )
 
     bpy.types.Scene.replace_bone_string = bpy.props.StringProperty(
-        name="",
+        name="To",
         description="",
         default="",
         maxlen=0,

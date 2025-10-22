@@ -5,10 +5,8 @@ from . import import_csv, model, register_wrap
 
 @register_wrap
 class ArmatureDiagnosticPanel(bpy.types.Panel):
-    """Armature Diagnostic panel"""
-
-    bl_label = "Armature Diagnostic Panel"
     bl_idname = "OBJECT_PT_armature_diagnostic"
+    bl_label = "Armature Diagnostic"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Helper"
@@ -16,12 +14,11 @@ class ArmatureDiagnosticPanel(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         row = layout.row()
-        layout.prop(context.scene, "selected_armature_to_diagnose")
-        row = layout.row()
         row.label(text="Armature Diagnostic", icon="ARMATURE_DATA")
         row = layout.row()
-        row.operator("mmd_tools_helper.armature_diagnostic", text="Diagnose Armature")
+        layout.prop(context.scene, "selected_armature_to_diagnose")
         row = layout.row()
+        row.operator("mmd_tools_helper.armature_diagnostic", text="Diagnose armature")
         row = layout.row()
 
 
@@ -63,8 +60,6 @@ def main(context):
 
 @register_wrap
 class ArmatureDiagnostic(bpy.types.Operator):
-    """Tooltip"""
-
     bl_idname = "mmd_tools_helper.armature_diagnostic"
     bl_label = "Armature Diagnostic"
 
@@ -119,7 +114,7 @@ class ArmatureDiagnostic(bpy.types.Operator):
             ("valvebiped", "ValveBiped bone names", "ValveBiped bone names"),
             ("iClone7", "iClone7 bone names", "iClone7 bone names"),
         ],
-        name="Armature Type :",
+        name="Armature Type",
         default="mmd_english",
     )
 
