@@ -38,10 +38,7 @@ if "bpy" in locals():
     else:
         import importlib
     importlib.reload(model)
-    importlib.reload(mmd_view)
-    importlib.reload(mmd_lamp_setup)
     importlib.reload(convert_to_blender_camera)
-    importlib.reload(background_color_picker)
     importlib.reload(boneMaps_renamer)
     importlib.reload(replace_bones_renaming)
     importlib.reload(armature_diagnostic)
@@ -49,10 +46,8 @@ if "bpy" in locals():
     importlib.reload(add_hand_arm_ik)
     importlib.reload(display_panel_groups)
     importlib.reload(toon_textures_to_node_editor_shader)
-    importlib.reload(toon_modifier)
     importlib.reload(reverse_japanese_english)
     importlib.reload(miscellaneous_tools)
-    importlib.reload(blender_bone_names_to_japanese_bone_names)
 else:
     import logging
 
@@ -64,18 +59,13 @@ else:
         add_foot_leg_ik,
         add_hand_arm_ik,
         armature_diagnostic,
-        background_color_picker,
-        blender_bone_names_to_japanese_bone_names,
         boneMaps_renamer,
         convert_to_blender_camera,
         display_panel_groups,
         miscellaneous_tools,
-        mmd_lamp_setup,
-        mmd_view,
         model,
         replace_bones_renaming,
         reverse_japanese_english,
-        toon_modifier,
         toon_textures_to_node_editor_shader,
     )
 
