@@ -10,7 +10,7 @@ class MiscellaneousToolsPanel(bpy.types.Panel):
     bl_label = "Miscellaneous Tools Panel"
     bl_idname = "OBJECT_PT_miscellaneous_tools"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS" if bpy.app.version < (2, 80, 0) else "UI"
+    bl_region_type = "UI"
     bl_category = "Helper"
 
     def draw(self, context):
@@ -231,6 +231,7 @@ class MiscellaneousTools(bpy.types.Operator):
 
     bl_idname = "mmd_tools_helper.miscellaneous_tools"
     bl_label = "Miscellaneous Tools"
+    bl_options = {"REGISTER", "UNDO"}
 
     bpy.types.Scene.selected_miscellaneous_tools = bpy.props.EnumProperty(
         items=[

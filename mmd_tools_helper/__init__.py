@@ -82,7 +82,7 @@ class MMDToolsHelperPanel(bpy.types.Panel):
     bl_label = "MMD Tools Helper"
     bl_idname = "OBJECT_PT_mmd_tools_helper"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS" if bpy.app.version < (2, 80, 0) else "UI"
+    bl_region_type = "UI"
     bl_category = "Helper"
 
     def draw(self, context):

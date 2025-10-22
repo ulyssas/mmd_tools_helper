@@ -10,7 +10,7 @@ class BonesRenamerPanel_MTH(bpy.types.Panel):
     bl_label = "Bones Renamer"
     bl_idname = "OBJECT_PT_bones_renamer_MTH"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS" if bpy.app.version < (2, 80, 0) else "UI"
+    bl_region_type = "UI"
     bl_category = "Helper"
 
     def draw(self, context):
@@ -136,6 +136,7 @@ class BonesRenamer(bpy.types.Operator):
 
     bl_idname = "object.bones_renamer"
     bl_label = "Bones Renamer"
+    bl_options = {"REGISTER", "UNDO"}
 
     bpy.types.Scene.Origin_Armature_Type = bpy.props.EnumProperty(
         items=[

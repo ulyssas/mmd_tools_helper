@@ -14,7 +14,7 @@ class MmdToolsDisplayPanelGroupsPanel(bpy.types.Panel):
     bl_idname = "OBJECT_PT_mmd_add_display_panel_groups"
     bl_label = "Create Display Panel Groups and Add Items"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS" if bpy.app.version < (2, 80, 0) else "UI"
+    bl_region_type = "UI"
     bl_category = "Helper"
 
     def draw(self, context):
@@ -274,6 +274,7 @@ class MmdToolsDisplayPanelGroups(bpy.types.Operator):
 
     bl_idname = "object.add_display_panel_groups"
     bl_label = "Create Display Panel Groups and Add Items"
+    bl_options = {"REGISTER", "UNDO"}
 
     bpy.types.Scene.display_panel_options = bpy.props.EnumProperty(
         items=[

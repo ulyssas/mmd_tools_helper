@@ -10,7 +10,7 @@ class ArmatureDiagnosticPanel(bpy.types.Panel):
     bl_label = "Armature Diagnostic Panel"
     bl_idname = "OBJECT_PT_armature_diagnostic"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS" if bpy.app.version < (2, 80, 0) else "UI"
+    bl_region_type = "UI"
     bl_category = "Helper"
 
     def draw(self, context):

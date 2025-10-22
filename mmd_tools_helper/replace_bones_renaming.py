@@ -10,7 +10,7 @@ class ReplaceBonesRenamingPanel(bpy.types.Panel):
     bl_label = "Replace bones renaming panel"
     bl_idname = "OBJECT_PT_replace_bones_renaming"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS" if bpy.app.version < (2, 80, 0) else "UI"
+    bl_region_type = "UI"
     bl_category = "Helper"
 
     def draw(self, context):
@@ -60,6 +60,7 @@ class ReplaceBonesRenaming(bpy.types.Operator):
 
     bl_idname = "mmd_tools_helper.replace_bones_renaming"
     bl_label = "Replace bones renaming"
+    bl_options = {"REGISTER", "UNDO"}
 
     bpy.types.Scene.find_bone_string = bpy.props.StringProperty(
         name="",

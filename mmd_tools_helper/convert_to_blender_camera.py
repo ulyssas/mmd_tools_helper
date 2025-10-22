@@ -10,7 +10,7 @@ class MMDCameraToBlenderCameraPanel(bpy.types.Panel):
     bl_idname = "OBJECT_PT_mmd_camera_to_blender_camera"
     bl_label = "Convert MMD Cameras to Blender cameras"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS" if bpy.app.version < (2, 80, 0) else "UI"
+    bl_region_type = "UI"
     bl_category = "Helper"
 
     def draw(self, context):
@@ -55,6 +55,7 @@ class MMDCameraToBlenderCamera(bpy.types.Operator):
 
     bl_idname = "mmd_tools_helper.mmd_camera_to_blender_camera"
     bl_label = "Convert MMD Cameras to Blender cameras"
+    bl_options = {"REGISTER", "UNDO"}
 
     # @classmethod
     # def poll(cls, context):
