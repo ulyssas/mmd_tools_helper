@@ -4,7 +4,7 @@ from . import import_csv, model, register_wrap
 
 
 @register_wrap
-class BonesRenamerPanel(bpy.types.Panel):
+class BatchBoneRenamePanel(bpy.types.Panel):
     bl_idname = "OBJECT_PT_bones_renamer"
     bl_label = "Batch rename bones"
     bl_space_type = "VIEW_3D"
@@ -128,7 +128,7 @@ def main(context):
 
 
 @register_wrap
-class BonesRenamer(bpy.types.Operator):
+class BatchBoneRename(bpy.types.Operator):
     bl_idname = "mmd_tools_helper.bone_batch_renamer"
     bl_label = "Batch rename bones"
     bl_description = "Batch rename bones for armature conversion"

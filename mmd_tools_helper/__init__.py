@@ -37,17 +37,17 @@ if "bpy" in locals():
         import imp as importlib
     else:
         import importlib
-    importlib.reload(model)
-    importlib.reload(convert_to_blender_camera)
-    importlib.reload(boneMaps_renamer)
-    importlib.reload(replace_bones_renaming)
+    importlib.reload(add_arm_ik)
+    importlib.reload(add_leg_ik)
     importlib.reload(armature_diagnostic)
-    importlib.reload(add_foot_leg_ik)
-    importlib.reload(add_hand_arm_ik)
-    importlib.reload(display_panel_groups)
-    importlib.reload(toon_textures_to_node_editor_shader)
-    importlib.reload(reverse_japanese_english)
+    importlib.reload(batch_bone_rename)
+    importlib.reload(convert_to_blender_camera)
+    importlib.reload(display_frame_groups)
+    importlib.reload(find_replace_bones)
     importlib.reload(miscellaneous_tools)
+    importlib.reload(model)
+    importlib.reload(swap_japanese_english)
+    importlib.reload(toon_tex_to_shader)
 else:
     import logging
 
@@ -56,17 +56,17 @@ else:
     __make_annotations = bpy.app.version >= (2, 80, 0)
     __bpy_property = bpy.props._PropertyDeferred if hasattr(bpy.props, "_PropertyDeferred") else tuple
     from . import (
-        add_foot_leg_ik,
-        add_hand_arm_ik,
+        add_arm_ik,
+        add_leg_ik,
         armature_diagnostic,
-        boneMaps_renamer,
+        batch_bone_rename,
         convert_to_blender_camera,
-        display_panel_groups,
+        display_frame_groups,
+        find_replace_bones,
         miscellaneous_tools,
         model,
-        replace_bones_renaming,
-        reverse_japanese_english,
-        toon_textures_to_node_editor_shader,
+        swap_japanese_english,
+        toon_tex_to_shader,
     )
 
 if bpy.app.version < (2, 80, 0):
