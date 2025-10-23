@@ -30,13 +30,20 @@ def main(context):
                 ]:
                     if b[FingerBoneMapIndex] not in bpy.context.active_object.data.bones.keys():
                         missing_bone_names.append(b[FingerBoneMapIndex])
-    print("\nSelected diagnostic bone map is:")
-    print(SelectedBoneMap)
-    print("These bone names of", SelectedBoneMap, "are missing from the active armature:")
-    print(missing_bone_names)
+
+    lines = []
+    lines.append(f"{context.active_object.name}: existing bone names")
+    for b in context.active_object.data.bones.keys():
+        if "dummy" not in b and "shadow" not in b:
+            lines.append(f" - {b}")
+    lines.append(f"\nSelected diagnostic bone map is: {SelectedBoneMap}")
+    lines.append(f"{context.active_object.name}: missing bone names")
+    for b in missing_bone_names:
+        lines.append(f" - {b}")
     if SelectedBoneMap == "mmd_english":
-        print("Please note that these 3 bones are MMD semi-standard bones and are not essential in an MMD armature:")
-        print("upper body 2, thumb0_L, thumb0_R")
+        lines.append("Warning: upper body 2, thumb0_L, thumb0_R are MMD semi-standard bones and are not essential.")
+
+    return "\n".join(lines)
 
 
 @register_wrap
@@ -99,6 +106,8 @@ class ArmatureDiagnostic(bpy.types.Operator):
         default="mmd_english",
     )
 
+    return_text = bpy.props.StringProperty(default="")
+
     @classmethod
     def poll(cls, context):
         if context.mode not in {"OBJECT", "POSE"}:
@@ -116,15 +125,20 @@ class ArmatureDiagnostic(bpy.types.Operator):
 
         try:
             bpy.context.view_layer.objects.active = model.findArmature(bpy.context.active_object)
-            print()
-            print()
-            print(bpy.context.active_object.name, "all bone names")
-            print([b for b in bpy.context.active_object.data.bones.keys() if "dummy" not in b and "shadow" not in b])
-            print()
-            main(context)
+
+            result = main(context)
+            self.result_text = result
+
+            print(f"\n\n{result}")
+
         except Exception as e:
             self.report({"ERROR"}, message=f"Failed to diagnose armature: {e}")
             return {"CANCELLED"}
         finally:
             bpy.ops.object.mode_set(mode=previous_mode)
-        return {"FINISHED"}
+        return context.window_manager.invoke_popup(self, width=700)
+
+    def draw(self, context):
+        layout = self.layout
+        for line in self.result_text.split("\n"):
+            layout.label(text=line)
