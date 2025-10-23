@@ -2,7 +2,7 @@ bl_info = {
     "name": "MMD Tools Helper",
     "author": "Hogarth-MMD",
     "version": (2, 4),
-    "blender": (2, 80, 0),
+    "blender": (3, 0, 0),
     "location": "View3D > Tool Shelf > MMD Tools Helper",
     "description": "various mmd_tools helper scripts",
     "warning": "",

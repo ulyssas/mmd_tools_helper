@@ -132,14 +132,15 @@ def main(context):
             links.new(diffuse.outputs[0], shader_to_rgb.inputs[0])
             links.new(shader_to_rgb.outputs[0], color_ramp.inputs[0])
             links.new(color_ramp.outputs[0], mix_color.inputs[0])
-            links.new(mmd_base_tex.outputs[0], mix_color.inputs[2])
-            links.new(mmd_base_tex.outputs[0], multiply_color.inputs[1])
             links.new(multiply_color.outputs[0], mix_color.inputs[1])
-            links.new(mmd_base_tex.outputs[1], mix_shader.inputs[0])
             links.new(mix_color.outputs[0], emission.inputs[0])
             links.new(transparent.outputs[0], mix_shader.inputs[1])
             links.new(emission.outputs[0], mix_shader.inputs[2])
             links.new(mix_shader.outputs[0], output.inputs[0])
+            if mmd_base_tex is not None:
+                links.new(mmd_base_tex.outputs[0], mix_color.inputs[2])
+                links.new(mmd_base_tex.outputs[0], multiply_color.inputs[1])
+                links.new(mmd_base_tex.outputs[1], mix_shader.inputs[0])
 
 
 @register_wrap
