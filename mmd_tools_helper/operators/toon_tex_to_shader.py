@@ -42,7 +42,7 @@ def clear_nodes(nodes):
             nodes.remove(node)
 
 
-def main(context):
+def main(context, clear_node=True):
     o = bpy.context.active_object
     if o.type != "MESH":
         return
@@ -53,7 +53,8 @@ def main(context):
             nodes = m.node_tree.nodes
             links = m.node_tree.links
 
-            clear_nodes(nodes)
+            if clear_node:
+                clear_nodes(nodes)
 
             output = nodes.get("Material Output")
             if output is None:
@@ -142,6 +143,8 @@ def main(context):
                 links.new(mmd_base_tex.outputs[0], multiply_color.inputs[1])
                 links.new(mmd_base_tex.outputs[1], mix_shader.inputs[0])
 
+    return len(o.data.materials)
+
 
 @register_wrap
 class MMDToonTexToShader(bpy.types.Operator):
@@ -149,6 +152,8 @@ class MMDToonTexToShader(bpy.types.Operator):
     bl_label = "Convert MMD Toon to Toon Shader"
     bl_description = "Sets up nodes in Blender node editor for rendering toon textures"
     bl_options = {"REGISTER", "UNDO"}
+
+    clear_node: bpy.props.BoolProperty(name="Clear existing nodes", default=True)
 
     @classmethod
     def poll(cls, context):
@@ -170,10 +175,11 @@ class MMDToonTexToShader(bpy.types.Operator):
             assert mesh_objects_list is not None, "The active object is not an MMD model."
             for o in mesh_objects_list:
                 bpy.context.view_layer.objects.active = o
-                main(context)
+                count = main(context, self.clear_node)
         except Exception as e:
             self.report({"ERROR"}, message=f"Failed to add toon shaders: {e}")
             return {"CANCELLED"}
         finally:
+            self.report({"INFO"}, message=f"Converted {count} materials")
             bpy.ops.object.mode_set(mode=previous_mode)
         return {"FINISHED"}

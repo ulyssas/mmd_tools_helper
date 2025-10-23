@@ -324,5 +324,6 @@ class AddMMDArmIK(bpy.types.Operator):
             self.report({"ERROR"}, message=f"Failed to add arm IK: {e}")
             return {"CANCELLED"}
         finally:
+            self.report({"INFO"}, message="Successfully added arm IK")
             bpy.ops.object.mode_set(mode=previous_mode)
         return {"FINISHED"}

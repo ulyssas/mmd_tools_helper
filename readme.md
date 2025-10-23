@@ -17,14 +17,6 @@ The model must have MMD standard names of arm and hand bones.
 It won't work correctly if an arm-twist bone is a parent bone of one of the arm bones.
 If an MMD model has hand-arm IK, its arm bones cannot be animated by normal VMD animations.
 
-### Create Display Panel Groups and Add Items
-
-Automatically creates MMD Display Panel Groups and automatically adds all bones and morphs of a model to the Display Panel groups. Useful time-saver when converting a model to MMD from other software. It can also be used to automatically correct display panel errors of an MMD model.
-3 options:
-No change (does nothing).
-Add Display Panel Groups from Bone Groups
-Add Display Panel Groups
-
 ### Armature Diagnostic
 
 Select a bone map from the list menu, then click the button. A list of the bone names, which are missing from the armature, is printed to the Blender System Console.

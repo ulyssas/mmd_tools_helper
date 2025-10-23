@@ -42,7 +42,6 @@ if "bpy" in locals():
     importlib.reload(armature_diagnostic)
     importlib.reload(batch_bone_rename)
     importlib.reload(convert_to_blender_camera)
-    importlib.reload(display_frame_groups)
     importlib.reload(find_replace_bones)
     importlib.reload(miscellaneous_tools)
     importlib.reload(swap_japanese_english)
@@ -63,7 +62,6 @@ else:
         armature_diagnostic,
         batch_bone_rename,
         convert_to_blender_camera,
-        display_frame_groups,
         find_replace_bones,
         miscellaneous_tools,
         swap_japanese_english,
@@ -74,21 +72,6 @@ if bpy.app.version < (2, 80, 0):
     bl_info["blender"] = (2, 70, 0)
 
 logging.basicConfig(format="%(message)s", level=logging.DEBUG)
-
-
-@register_wrap
-class MMDToolsHelperPanel(bpy.types.Panel):
-    """Creates the MMD Tools Helper Panel in a VIEW_3D TOOLS tab"""
-
-    bl_label = "MMD Tools Helper"
-    bl_idname = "OBJECT_PT_mmd_tools_helper"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_category = "Helper"
-
-    def draw(self, context):
-        layout = self.layout
-        row = layout.row()
 
 
 def register():

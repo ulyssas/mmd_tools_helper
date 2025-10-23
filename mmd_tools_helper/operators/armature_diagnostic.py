@@ -3,7 +3,7 @@ import bpy
 from .. import import_csv, model, register_wrap
 
 
-def main(context):
+def main(context, show_all_bones):
     missing_bone_names = []
     BONE_NAMES_DICTIONARY = import_csv.use_csv_bones_dictionary()
     FINGER_BONE_NAMES_DICTIONARY = import_csv.use_csv_bones_fingers_dictionary()
@@ -31,15 +31,27 @@ def main(context):
                     if b[FingerBoneMapIndex] not in bpy.context.active_object.data.bones.keys():
                         missing_bone_names.append(b[FingerBoneMapIndex])
 
+    bone_display_count = 10
     lines = []
-    lines.append(f"{context.active_object.name}: existing bone names")
-    for b in context.active_object.data.bones.keys():
-        if "dummy" not in b and "shadow" not in b:
-            lines.append(f" - {b}")
+    existing = []
+    missing = []
+    if show_all_bones:
+        lines.append(f"{context.active_object.name}: existing bone names")
+        for b in context.active_object.data.bones.keys():
+            if "dummy" not in b and "shadow" not in b:
+                if len(existing) % bone_display_count == 0:
+                    existing.append(f"{b}\n")
+                else:
+                    existing.append(b)
+        lines.append(f"[{', '.join(existing)}]")
     lines.append(f"\nSelected diagnostic bone map is: {SelectedBoneMap}")
     lines.append(f"{context.active_object.name}: missing bone names")
     for b in missing_bone_names:
-        lines.append(f" - {b}")
+        if len(missing) % bone_display_count == 0:
+            missing.append(f"{b}\n")
+        else:
+            missing.append(b)
+    lines.append(f"[{', '.join(missing)}]")
     if SelectedBoneMap == "mmd_english":
         lines.append("Warning: upper body 2, thumb0_L, thumb0_R are MMD semi-standard bones and are not essential.")
 
@@ -106,7 +118,9 @@ class ArmatureDiagnostic(bpy.types.Operator):
         default="mmd_english",
     )
 
-    return_text = bpy.props.StringProperty(default="")
+    # TODO actually add show_all_bones toggle
+    show_all_bones: bpy.props.BoolProperty(name="Add all bones to diagnosis", default=False)
+    return_text: bpy.props.StringProperty(default="")
 
     @classmethod
     def poll(cls, context):
@@ -126,7 +140,7 @@ class ArmatureDiagnostic(bpy.types.Operator):
         try:
             bpy.context.view_layer.objects.active = model.findArmature(bpy.context.active_object)
 
-            result = main(context)
+            result = main(context, self.show_all_bones)
             self.result_text = result
 
             print(f"\n\n{result}")
@@ -136,9 +150,30 @@ class ArmatureDiagnostic(bpy.types.Operator):
             return {"CANCELLED"}
         finally:
             bpy.ops.object.mode_set(mode=previous_mode)
-        return context.window_manager.invoke_popup(self, width=700)
+        return context.window_manager.invoke_popup(self, width=800)
 
     def draw(self, context):
         layout = self.layout
+        layout.label(text="Armature diagnosis", icon="OUTLINER_OB_ARMATURE")
+
+        row = layout.row(align=True)
+        op = row.operator(CopyDiagnosticResult.bl_idname, text="Copy Report", icon="COPYDOWN")
+        op.text = self.result_text
+        layout.separator()
+
         for line in self.result_text.split("\n"):
             layout.label(text=line)
+
+
+@register_wrap
+class CopyDiagnosticResult(bpy.types.Operator):
+    bl_idname = "mmd_tools_helper.copy_diagnostic_result"
+    bl_label = "Copy Report"
+    bl_description = "Copy the diagnostic result to the clipboard"
+
+    text: bpy.props.StringProperty(default="")
+
+    def execute(self, context):
+        bpy.context.window_manager.clipboard = self.text
+        self.report({"INFO"}, "Diagnostic result copied to clipboard")
+        return {"FINISHED"}

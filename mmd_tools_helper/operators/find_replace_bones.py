@@ -4,6 +4,7 @@ from .. import model, register_wrap
 
 
 def main(context):
+    replace_count = 0
     bpy.context.view_layer.objects.active = model.findArmature(bpy.context.active_object)
     if bpy.context.scene.bones_all_or_selected:
         for b in bpy.context.active_object.data.bones:
@@ -13,6 +14,7 @@ def main(context):
                         bpy.context.scene.find_bone_string,
                         bpy.context.scene.replace_bone_string,
                     )
+                    replace_count += 1
     if not bpy.context.scene.bones_all_or_selected:
         for b in bpy.context.active_object.data.bones:
             if "dummy" not in b.name and "shadow" not in b.name:
@@ -20,6 +22,9 @@ def main(context):
                     bpy.context.scene.find_bone_string,
                     bpy.context.scene.replace_bone_string,
                 )
+                replace_count += 1
+
+    return replace_count
 
 
 @register_wrap
@@ -80,10 +85,11 @@ class FindReplaceBones(bpy.types.Operator):
         previous_mode = context.mode
 
         try:
-            main(context)
+            replace_count = main(context)
         except Exception as e:
             self.report({"ERROR"}, message=f"Failed to find and replace bones: {e}")
             return {"CANCELLED"}
         finally:
+            self.report({"INFO"}, message=f"Replaced {replace_count} entries")
             bpy.ops.object.mode_set(mode=previous_mode)
         return {"FINISHED"}
