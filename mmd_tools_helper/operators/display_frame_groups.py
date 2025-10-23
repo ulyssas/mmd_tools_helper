@@ -1,30 +1,10 @@
 import bpy
 
-from . import import_csv, model, register_wrap
+from .. import import_csv, model, register_wrap
 
 
 def __items(display_item_frame):
     return getattr(display_item_frame, "data", display_item_frame.items)
-
-
-@register_wrap
-class MMDDisplayFrameGroupsPanel(bpy.types.Panel):
-    bl_idname = "OBJECT_PT_mmd_add_display_panel_groups"
-    bl_label = "Display Frame"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_category = "Helper"
-
-    def draw(self, context):
-        layout = self.layout
-        row = layout.row()
-
-        row.label(text="Display Frame", icon="ARMATURE_DATA")
-        row = layout.row()
-        layout.prop(context.scene, "display_panel_options")
-        row = layout.row()
-        row.operator("mmd_tools_helper.add_display_frames", text="Add display panel items")
-        row = layout.row()
 
 
 def delete_empty_display_panel_groups(root):
@@ -267,7 +247,7 @@ def main(context):
 
 
 @register_wrap
-class MMDDisplayFrameGroups(bpy.types.Operator):
+class MMDDisplayFrames(bpy.types.Operator):
     bl_idname = "mmd_tools_helper.add_display_frames"
     bl_label = "Create display frames and add items"
     bl_description = "Add bone names and shape key names to display frames in bulk"
@@ -293,8 +273,24 @@ class MMDDisplayFrameGroups(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.active_object is not None
+        if context.mode not in {"OBJECT", "POSE"}:
+            return False
+
+        active_object = context.active_object
+
+        if active_object is None:
+            return False
+
+        return model.findRoot(active_object) is not None
 
     def execute(self, context):
-        main(context)
+        previous_mode = context.mode
+
+        try:
+            main(context)
+        except Exception as e:
+            self.report({"ERROR"}, message=f"Failed to add display frames: {e}")
+            return {"CANCELLED"}
+        finally:
+            bpy.ops.object.mode_set(mode=previous_mode)
         return {"FINISHED"}

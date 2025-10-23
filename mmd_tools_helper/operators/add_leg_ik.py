@@ -2,7 +2,7 @@ import math
 
 import bpy
 
-from . import model, register_wrap
+from .. import model, register_wrap
 
 # def armature_diagnostic():
 # ENGLISH_LEG_BONES = ["knee_L", "knee_R", "ankle_L", "ankle_R", "toe_L", "toe_R"]
@@ -33,24 +33,6 @@ from . import model, register_wrap
 # for b in IK_BONE_NAMES:
 # if b in bpy.context.active_object.data.bones.keys():
 # print('This armature appears to already have IK bones. This bone seems to be an IK bone:', '\n', b)
-
-
-@register_wrap
-class AddMMDLegIKPanel(bpy.types.Panel):
-    bl_idname = "OBJECT_PT_mmd_add_foot_leg_ik"
-    bl_label = "Add leg IK to MMD model"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_category = "Helper"
-
-    def draw(self, context):
-        layout = self.layout
-        row = layout.row()
-
-        row.label(text="Add leg IK to MMD model", icon="ARMATURE_DATA")
-        row = layout.row()
-        row.operator("mmd_tools_helper.add_leg_ik", text="Add leg IK")
-        row = layout.row()
 
 
 def clear_IK(context):
@@ -394,9 +376,25 @@ class AddMMDLegIK(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.active_object is not None
+        if context.mode not in {"OBJECT", "POSE"}:
+            return False
+
+        active_object = context.active_object
+
+        if active_object is None:
+            return False
+
+        return model.findRoot(active_object) is not None
 
     def execute(self, context):
-        clear_IK(context)
-        main(context)
+        previous_mode = context.mode
+
+        try:
+            clear_IK(context)
+            main(context)
+        except Exception as e:
+            self.report({"ERROR"}, message=f"Failed to add leg IK: {e}")
+            return {"CANCELLED"}
+        finally:
+            bpy.ops.object.mode_set(mode=previous_mode)
         return {"FINISHED"}

@@ -45,9 +45,10 @@ if "bpy" in locals():
     importlib.reload(display_frame_groups)
     importlib.reload(find_replace_bones)
     importlib.reload(miscellaneous_tools)
-    importlib.reload(model)
     importlib.reload(swap_japanese_english)
     importlib.reload(toon_tex_to_shader)
+    importlib.reload(model)
+    importlib.reload(panels)
 else:
     import logging
 
@@ -55,7 +56,8 @@ else:
 
     __make_annotations = bpy.app.version >= (2, 80, 0)
     __bpy_property = bpy.props._PropertyDeferred if hasattr(bpy.props, "_PropertyDeferred") else tuple
-    from . import (
+    from . import model, panels
+    from .operators import (
         add_arm_ik,
         add_leg_ik,
         armature_diagnostic,
@@ -64,7 +66,6 @@ else:
         display_frame_groups,
         find_replace_bones,
         miscellaneous_tools,
-        model,
         swap_japanese_english,
         toon_tex_to_shader,
     )

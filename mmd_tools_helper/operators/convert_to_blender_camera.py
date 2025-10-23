@@ -1,23 +1,6 @@
 import bpy
 
-from . import register_wrap
-
-
-@register_wrap
-class MMDCameraToBlenderPanel(bpy.types.Panel):
-    bl_idname = "OBJECT_PT_mmd_camera_to_blender_camera"
-    bl_label = "MMD Camera to Blender"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_category = "Helper"
-
-    def draw(self, context):
-        layout = self.layout
-        row = layout.row()
-
-        row = layout.row()
-        row.operator("mmd_tools_helper.mmd_camera_to_blender", text="Convert MMD Camera")
-        row = layout.row()
+from .. import model, register_wrap
 
 
 def main(context):
@@ -51,10 +34,26 @@ class MMDCameraToBlender(bpy.types.Operator):
     bl_description = "Convert MMD camera to Blender camera"
     bl_options = {"REGISTER", "UNDO"}
 
-    # @classmethod
-    # def poll(cls, context):
-    # return context.active_object is not None
+    @classmethod
+    def poll(cls, context):
+        if context.mode not in {"OBJECT", "POSE"}:
+            return False
+
+        active_object = context.active_object
+
+        if active_object is None:
+            return False
+
+        return model.findCamera(active_object) is not None
 
     def execute(self, context):
-        main(context)
+        previous_mode = context.mode
+
+        try:
+            main(context)
+        except Exception as e:
+            self.report({"ERROR"}, message=f"Failed to convert MMD camera: {e}")
+            return {"CANCELLED"}
+        finally:
+            bpy.ops.object.mode_set(mode=previous_mode)
         return {"FINISHED"}

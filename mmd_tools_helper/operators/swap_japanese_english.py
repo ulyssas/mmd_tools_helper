@@ -1,24 +1,6 @@
 import bpy
 
-from . import register_wrap
-
-
-@register_wrap
-class SwapJapaneseEnglishPanel(bpy.types.Panel):
-    bl_idname = "OBJECT_PT_reverse_japanese_english"
-    bl_label = "Swap Japanese & English names"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_category = "Helper"
-
-    def draw(self, context):
-        layout = self.layout
-        row = layout.row()
-
-        row.label(text="Swap Japanese & English names", icon="TEXT")
-        row = layout.row()
-        row.operator("mmd_tools_helper.swap_japanese_english", text="Swap Japanese & English")
-        row = layout.row()
+from .. import model, register_wrap
 
 
 def main(context):
@@ -65,6 +47,26 @@ class SwapJapaneseEnglish(bpy.types.Operator):
     bl_description = "Swap Japanese and English names of shape keys, materials, bones"
     bl_options = {"REGISTER", "UNDO"}
 
+    @classmethod
+    def poll(cls, context):
+        if context.mode not in {"OBJECT", "POSE"}:
+            return False
+
+        active_object = context.active_object
+
+        if active_object is None:
+            return False
+
+        return model.findRoot(active_object) is not None
+
     def execute(self, context):
-        main(context)
+        previous_mode = context.mode
+
+        try:
+            main(context)
+        except Exception as e:
+            self.report({"ERROR"}, message=f"Failed to swap japanese and english names: {e}")
+            return {"CANCELLED"}
+        finally:
+            bpy.ops.object.mode_set(mode=previous_mode)
         return {"FINISHED"}

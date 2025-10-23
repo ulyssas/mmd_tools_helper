@@ -1,28 +1,6 @@
 import bpy
 
-from . import import_csv, model, register_wrap
-
-
-@register_wrap
-class BatchBoneRenamePanel(bpy.types.Panel):
-    bl_idname = "OBJECT_PT_bones_renamer"
-    bl_label = "Batch rename bones"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_category = "Helper"
-
-    def draw(self, context):
-        layout = self.layout
-        row = layout.row()
-
-        row.label(text="Batch rename bones", icon="ARMATURE_DATA")
-        row = layout.row()
-        layout.prop(context.scene, "origin_armature_type")
-        row = layout.row()
-        layout.prop(context.scene, "destination_armature_type")
-        row = layout.row()
-        row.operator("mmd_tools_helper.bone_batch_renamer", text="Batch rename bones")
-        row = layout.row()
+from .. import import_csv, model, register_wrap
 
 
 def unhide_all_armatures():
@@ -129,7 +107,7 @@ def main(context):
 
 @register_wrap
 class BatchBoneRename(bpy.types.Operator):
-    bl_idname = "mmd_tools_helper.bone_batch_renamer"
+    bl_idname = "mmd_tools_helper.bone_batch_rename"
     bl_label = "Batch rename bones"
     bl_description = "Batch rename bones for armature conversion"
     bl_options = {"REGISTER", "UNDO"}
@@ -244,11 +222,26 @@ class BatchBoneRename(bpy.types.Operator):
         default="mmd_english",
     )
 
-    # @classmethod
-    # def poll(cls, context):
-    # return context.active_object.type == 'ARMATURE'
-    # return context.active_object is not None
+    @classmethod
+    def poll(cls, context):
+        if context.mode not in {"OBJECT", "POSE"}:
+            return False
+
+        active_object = context.active_object
+
+        if active_object is None:
+            return False
+
+        return model.findRoot(active_object) is not None
 
     def execute(self, context):
-        main(context)
+        previous_mode = context.mode
+
+        try:
+            main(context)
+        except Exception as e:
+            self.report({"ERROR"}, message=f"Failed to batch rename bones: {e}")
+            return {"CANCELLED"}
+        finally:
+            bpy.ops.object.mode_set(mode=previous_mode)
         return {"FINISHED"}

@@ -1,29 +1,6 @@
 import bpy
 
-from . import model, register_wrap
-
-
-@register_wrap
-class FindReplaceBonesPanel(bpy.types.Panel):
-    bl_label = "Replace String"
-    bl_idname = "OBJECT_PT_replace_bones_renaming"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_category = "Helper"
-
-    def draw(self, context):
-        layout = self.layout
-        row = layout.row()
-        row.prop(context.scene, "find_bone_string")
-        row = layout.row()
-        row.prop(context.scene, "replace_bone_string")
-        row = layout.row()
-        row.prop(context.scene, "bones_all_or_selected")
-        row = layout.row()
-        row.label(text="Selected bones only")
-        row = layout.row()
-        row.operator("mmd_tools_helper.find_replace_bones", text="Find & replace string in bone names")
-        row = layout.row()
+from .. import model, register_wrap
 
 
 def main(context):
@@ -89,8 +66,24 @@ class FindReplaceBones(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.active_object is not None
+        if context.mode not in {"OBJECT", "POSE"}:
+            return False
+
+        active_object = context.active_object
+
+        if active_object is None:
+            return False
+
+        return model.findRoot(active_object) is not None
 
     def execute(self, context):
-        main(context)
+        previous_mode = context.mode
+
+        try:
+            main(context)
+        except Exception as e:
+            self.report({"ERROR"}, message=f"Failed to find and replace bones: {e}")
+            return {"CANCELLED"}
+        finally:
+            bpy.ops.object.mode_set(mode=previous_mode)
         return {"FINISHED"}

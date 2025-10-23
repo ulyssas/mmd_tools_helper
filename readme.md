@@ -1,30 +1,10 @@
 # MMD Tools Helper
 
-mmd_tools (powroupi fork) must be installed for this add-on to work.
+mmd_tools (UuuNyaa fork) must be installed for this add-on to work.
 
 All of the operators in this add-on have "flexible selection". An MMD model has a root/empty object, an armature object, and one or more mesh objects. It does not matter which of these is selected to be the active object. All operators in this mmd_tools_helper add-on are programmed to automatically find the correct part of the MMD model that it should operate on.
 
 ## Panels and buttons
-
-### MMD View button
-
-Convenient one-click setup of camera, grid and background color.
-
-### MMD Lamp button
-
-Convenient one-click setup of Lamp.
-
-### Convert MMD Camera to Blender Camera button
-
-An mmd_tools "MMD camera" is child of an "MMD camera" empty object and it is also different from a normal Blender camera in other ways. You can convert all "MMD cameras" in the scene back to normal Blender cameras by clicking this button.
-
-### MMD background Color Picker
-
-Selects a color for the world background. A background text color is automatically chosen to contrast with this background color.
-
-### Bones Renamer
-
-Select the source and destination armature types. Then click the button to do a mass renaming of bones from one armature type to another. After renaming a diagnostic list or missing bone names is printed to the Blender System Console. A time-saver when converting models or animations from one format to another. There are 15 supported armature types.
 
 ### Add foot leg IK to MMD model
 
@@ -45,23 +25,25 @@ No change (does nothing).
 Add Display Panel Groups from Bone Groups
 Add Display Panel Groups
 
-### MMD Create Toon Material Nodes button
+### Armature Diagnostic
 
-Adds node editor material nodes for the rendering of Toon Textures in Blender for an MMD model which has been imported with mmd_tools(powroupi fork).
+Select a bone map from the list menu, then click the button. A list of the bone names, which are missing from the armature, is printed to the Blender System Console.
 
-### Toon modifier blend type dropdown menu
+### Bones Renamer
 
-Toon modifier color picker
-Modify Toon button
-Modifies the color of shadows of an mmd_model after running the "MMD Create Toon Material Nodes" operator has already created material nodes for the MMD model.
+Select the source and destination armature types. Then click the button to do a mass renaming of bones from one armature type to another. After renaming a diagnostic list or missing bone names is printed to the Blender System Console. A time-saver when converting models or animations from one format to another. There are 15 supported armature types.
 
 ### Reverse Japanese and English names
 
 Reverses the Japanese and English names of bones, shape keys and materials. The Japanese names become English names and the English names become Japanese names. If a Japanese name has no English name, it just stays the same. For someone who does not know Japanese, this operator can make it easier to edit an MMD model in Blender.
 
-### Armature Diagnostic
+### Convert MMD Camera to Blender Camera button
 
-Select a bone map from the list menu, then click the button. A list of the bone names, which are missing from the armature, is printed to the Blender System Console.
+An mmd_tools "MMD camera" is child of an "MMD camera" empty object and it is also different from a normal Blender camera in other ways. You can convert all "MMD cameras" in the scene back to normal Blender cameras by clicking this button.
+
+### MMD Create Toon Material Nodes button
+
+Adds node editor material nodes for the rendering of Toon Textures in Blender for an MMD model which has been imported with mmd_tools(powroupi fork).
 
 ### Miscellaneous Tools Panel
 
@@ -92,8 +74,3 @@ Added a new operator (button) "Copy Blender bone names to Japanese bone names".
 This operator is useful if you are doing a mass renaming of bones of a .pmx model which you have imported into Blender with mmd_tools. In that case, you should select "Copy Blender bone names to Japanese bone names" as the final step before exporting the model to a .pmx file.
 
 (When mmd_tools exports a .pmx model, it looks at the Japanese bone name of each bone. If a bone does not have a Japanese bone name, it copies the Blender bone name to be the Japanese bone name. But if the bone already has a Japanese bone name, the Japanese bone name stays the same, and all of the renaming of Blender bone names which you have done in Blender will be lost and will not be exported.)
-
-## Plan
-
-I will first make a version that only fixes any errors/non-functional parts.
-Then, I'll update addon UI and folder structure to make new version.

@@ -1,25 +1,6 @@
 import bpy
 
-from . import import_csv, model, register_wrap
-
-
-@register_wrap
-class ArmatureDiagnosticPanel(bpy.types.Panel):
-    bl_idname = "OBJECT_PT_armature_diagnostic"
-    bl_label = "Armature Diagnostic"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_category = "Helper"
-
-    def draw(self, context):
-        layout = self.layout
-        row = layout.row()
-        row.label(text="Armature Diagnostic", icon="ARMATURE_DATA")
-        row = layout.row()
-        layout.prop(context.scene, "selected_armature_to_diagnose")
-        row = layout.row()
-        row.operator("mmd_tools_helper.armature_diagnostic", text="Diagnose armature")
-        row = layout.row()
+from .. import import_csv, model, register_wrap
 
 
 def main(context):
@@ -120,14 +101,30 @@ class ArmatureDiagnostic(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.active_object is not None
+        if context.mode not in {"OBJECT", "POSE"}:
+            return False
+
+        active_object = context.active_object
+
+        if active_object is None:
+            return False
+
+        return model.findRoot(active_object) is not None
 
     def execute(self, context):
-        bpy.context.view_layer.objects.active = model.findArmature(bpy.context.active_object)
-        print()
-        print()
-        print(bpy.context.active_object.name, "all bone names")
-        print([b for b in bpy.context.active_object.data.bones.keys() if "dummy" not in b and "shadow" not in b])
-        print()
-        main(context)
+        previous_mode = context.mode
+
+        try:
+            bpy.context.view_layer.objects.active = model.findArmature(bpy.context.active_object)
+            print()
+            print()
+            print(bpy.context.active_object.name, "all bone names")
+            print([b for b in bpy.context.active_object.data.bones.keys() if "dummy" not in b and "shadow" not in b])
+            print()
+            main(context)
+        except Exception as e:
+            self.report({"ERROR"}, message=f"Failed to diagnose armature: {e}")
+            return {"CANCELLED"}
+        finally:
+            bpy.ops.object.mode_set(mode=previous_mode)
         return {"FINISHED"}

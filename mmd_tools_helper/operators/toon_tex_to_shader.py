@@ -1,28 +1,10 @@
 import bpy
 
-from . import model, register_wrap
+from .. import model, register_wrap
 
 # Each image is a list of numbers(floats): R,G,B,A,R,G,B,A etc.
 # So the length of the list of pixels is 4 X number of pixels
 # pixels are in left-to-right rows from bottom left to top right of image
-
-
-@register_wrap
-class MMDToonTexToShaderPanel(bpy.types.Panel):
-    bl_idname = "OBJECT_PT_mmd_toon_render_node_editor"
-    bl_label = "MMD Toon to Toon Shader"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_category = "Helper"
-
-    def draw(self, context):
-        layout = self.layout
-        row = layout.row()
-
-        row.label(text="MMD Toon to Toon Shader", icon="MATERIAL")
-        row = layout.row()
-        row.operator("mmd_tools_helper.mmd_toon_shader", text="Convert to Toon Shader")
-        row = layout.row()
 
 
 def toon_image_to_color_ramp(toon_texture_color_ramp, toon_image):
@@ -167,14 +149,30 @@ class MMDToonTexToShader(bpy.types.Operator):
     bl_description = "Sets up nodes in Blender node editor for rendering toon textures"
     bl_options = {"REGISTER", "UNDO"}
 
-    # @classmethod
-    # def poll(cls, context):
-    # return context.active_object is not None
+    @classmethod
+    def poll(cls, context):
+        if context.mode not in {"OBJECT", "POSE"}:
+            return False
+
+        active_object = context.active_object
+
+        if active_object is None:
+            return False
+
+        return model.findRoot(active_object) is not None
 
     def execute(self, context):
-        mesh_objects_list = model.find_MMD_MeshesList(bpy.context.active_object)
-        assert mesh_objects_list is not None, "The active object is not an MMD model."
-        for o in mesh_objects_list:
-            bpy.context.view_layer.objects.active = o
-            main(context)
+        previous_mode = context.mode
+
+        try:
+            mesh_objects_list = model.find_MMD_MeshesList(bpy.context.active_object)
+            assert mesh_objects_list is not None, "The active object is not an MMD model."
+            for o in mesh_objects_list:
+                bpy.context.view_layer.objects.active = o
+                main(context)
+        except Exception as e:
+            self.report({"ERROR"}, message=f"Failed to add toon shaders: {e}")
+            return {"CANCELLED"}
+        finally:
+            bpy.ops.object.mode_set(mode=previous_mode)
         return {"FINISHED"}

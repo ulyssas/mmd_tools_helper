@@ -13,6 +13,16 @@ def findRoot(obj):
         return None
 
 
+def findCamera(obj):
+    if obj is not None:
+        if obj.mmd_type == "CAMERA":
+            return obj
+        else:
+            return findCamera(obj.parent)
+    else:
+        return None
+
+
 def armature(root):
     armatures = []
     for c in root.children:

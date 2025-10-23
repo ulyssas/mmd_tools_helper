@@ -1,24 +1,6 @@
 import bpy
 
-from . import model, register_wrap
-
-
-@register_wrap
-class AddMMDArmIKPanel(bpy.types.Panel):
-    bl_idname = "OBJECT_PT_mmd_add_hand_arm_ik"
-    bl_label = "Add arm IK to MMD model"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_category = "Helper"
-
-    def draw(self, context):
-        layout = self.layout
-        row = layout.row()
-
-        row.label(text="Add arm IK to MMD model", icon="ARMATURE_DATA")
-        row = layout.row()
-        row.operator("mmd_tools_helper.add_arm_ik", text="Add arm IK")
-        row = layout.row()
+from .. import model, register_wrap
 
 
 def clear_IK(context):
@@ -322,9 +304,25 @@ class AddMMDArmIK(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.active_object is not None
+        if context.mode not in {"OBJECT", "POSE"}:
+            return False
+
+        active_object = context.active_object
+
+        if active_object is None:
+            return False
+
+        return model.findRoot(active_object) is not None
 
     def execute(self, context):
-        clear_IK(context)
-        main(context)
+        previous_mode = context.mode
+
+        try:
+            clear_IK(context)
+            main(context)
+        except Exception as e:
+            self.report({"ERROR"}, message=f"Failed to add arm IK: {e}")
+            return {"CANCELLED"}
+        finally:
+            bpy.ops.object.mode_set(mode=previous_mode)
         return {"FINISHED"}

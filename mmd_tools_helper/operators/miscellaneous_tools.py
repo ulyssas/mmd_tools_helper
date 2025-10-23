@@ -1,25 +1,6 @@
 import bpy
 
-from . import model, register_wrap
-
-
-@register_wrap
-class MiscellaneousToolsPanel(bpy.types.Panel):
-    bl_idname = "OBJECT_PT_miscellaneous_tools"
-    bl_label = "Miscellaneous Tools"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_category = "Helper"
-
-    def draw(self, context):
-        layout = self.layout
-
-        row = layout.row()
-        layout.prop(context.scene, "selected_misc_tools")
-        row = layout.row()
-        row.label(text="Miscellaneous Tools", icon="WORLD_DATA")
-        row = layout.row()
-        row.operator("mmd_tools_helper.misc_tools", text="Execute")
+from .. import model, register_wrap
 
 
 def all_materials_mmd_ambient_white():
@@ -259,8 +240,24 @@ class MiscellaneousTools(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.active_object is not None
+        if context.mode not in {"OBJECT", "POSE"}:
+            return False
+
+        active_object = context.active_object
+
+        if active_object is None:
+            return False
+
+        return True
 
     def execute(self, context):
-        main(context)
+        previous_mode = context.mode
+
+        try:
+            main(context)
+        except Exception as e:
+            self.report({"ERROR"}, message=f"Failed to execute misc tools: {e}")
+            return {"CANCELLED"}
+        finally:
+            bpy.ops.object.mode_set(mode=previous_mode)
         return {"FINISHED"}
