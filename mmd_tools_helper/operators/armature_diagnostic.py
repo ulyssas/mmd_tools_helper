@@ -7,15 +7,15 @@ def main(context, show_all_bones):
     missing_bone_names = []
     BONE_NAMES_DICTIONARY = import_csv.use_csv_bones_dictionary()
     FINGER_BONE_NAMES_DICTIONARY = import_csv.use_csv_bones_fingers_dictionary()
-    SelectedBoneMap = bpy.context.scene.selected_armature_to_diagnose
+    SelectedBoneMap = context.scene.selected_armature_to_diagnose
     BoneMapIndex = BONE_NAMES_DICTIONARY[0].index(SelectedBoneMap)
     FingerBoneMapIndex = FINGER_BONE_NAMES_DICTIONARY[0].index(SelectedBoneMap)
-    bpy.context.view_layer.objects.active = model.findArmature(bpy.context.active_object)
+    context.view_layer.objects.active = model.findArmature(context.active_object)
     for b in BONE_NAMES_DICTIONARY:
         if BONE_NAMES_DICTIONARY.index(b) != 0:
             if b[BoneMapIndex] != "":
                 if b[BoneMapIndex] not in ["upper body 2", "上半身2"]:
-                    if b[BoneMapIndex] not in bpy.context.active_object.data.bones.keys():
+                    if b[BoneMapIndex] not in context.active_object.data.bones.keys():
                         missing_bone_names.append(b[BoneMapIndex])
     for b in FINGER_BONE_NAMES_DICTIONARY:
         if FINGER_BONE_NAMES_DICTIONARY.index(b) != 0:
@@ -28,7 +28,7 @@ def main(context, show_all_bones):
                     "右親指0",
                     "親指0.R",
                 ]:
-                    if b[FingerBoneMapIndex] not in bpy.context.active_object.data.bones.keys():
+                    if b[FingerBoneMapIndex] not in context.active_object.data.bones.keys():
                         missing_bone_names.append(b[FingerBoneMapIndex])
 
     bone_display_count = 10
@@ -138,7 +138,7 @@ class ArmatureDiagnostic(bpy.types.Operator):
         previous_mode = context.mode
 
         try:
-            bpy.context.view_layer.objects.active = model.findArmature(bpy.context.active_object)
+            context.view_layer.objects.active = model.findArmature(context.active_object)
 
             result = main(context, self.show_all_bones)
             self.result_text = result
@@ -174,6 +174,6 @@ class CopyDiagnosticResult(bpy.types.Operator):
     text: bpy.props.StringProperty(default="")
 
     def execute(self, context):
-        bpy.context.window_manager.clipboard = self.text
+        context.window_manager.clipboard = self.text
         self.report({"INFO"}, "Diagnostic result copied to clipboard")
         return {"FINISHED"}

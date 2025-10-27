@@ -43,7 +43,7 @@ def clear_nodes(nodes):
 
 
 def main(context, clear_node=True):
-    o = bpy.context.active_object
+    o = context.active_object
     if o.type != "MESH":
         return
 
@@ -171,10 +171,10 @@ class MMDToonTexToShader(bpy.types.Operator):
         previous_mode = context.mode
 
         try:
-            mesh_objects_list = model.find_MMD_MeshesList(bpy.context.active_object)
+            mesh_objects_list = model.find_MMD_MeshesList(context.active_object)
             assert mesh_objects_list is not None, "The active object is not an MMD model."
             for o in mesh_objects_list:
-                bpy.context.view_layer.objects.active = o
+                context.view_layer.objects.active = o
                 count = main(context, self.clear_node)
         except Exception as e:
             self.report({"ERROR"}, message=f"Failed to add toon shaders: {e}")

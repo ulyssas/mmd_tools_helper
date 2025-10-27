@@ -5,22 +5,22 @@ from .. import model, register_wrap
 
 def main(context):
     replace_count = 0
-    bpy.context.view_layer.objects.active = model.findArmature(bpy.context.active_object)
-    if bpy.context.scene.bones_all_or_selected:
-        for b in bpy.context.active_object.data.bones:
+    context.view_layer.objects.active = model.findArmature(context.active_object)
+    if context.scene.bones_all_or_selected:
+        for b in context.active_object.data.bones:
             if b.select:
                 if "dummy" not in b.name and "shadow" not in b.name:
                     b.name = b.name.replace(
-                        bpy.context.scene.find_bone_string,
-                        bpy.context.scene.replace_bone_string,
+                        context.scene.find_bone_string,
+                        context.scene.replace_bone_string,
                     )
                     replace_count += 1
-    if not bpy.context.scene.bones_all_or_selected:
-        for b in bpy.context.active_object.data.bones:
+    if not context.scene.bones_all_or_selected:
+        for b in context.active_object.data.bones:
             if "dummy" not in b.name and "shadow" not in b.name:
                 b.name = b.name.replace(
-                    bpy.context.scene.find_bone_string,
-                    bpy.context.scene.replace_bone_string,
+                    context.scene.find_bone_string,
+                    context.scene.replace_bone_string,
                 )
                 replace_count += 1
 

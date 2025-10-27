@@ -4,7 +4,7 @@ from .. import model, register_wrap
 
 
 def main(context):
-    for o in bpy.context.scene.objects:
+    for o in context.scene.objects:
         if o.type == "CAMERA":
             camera = o
             camera.lock_location[0] = False
@@ -23,7 +23,7 @@ def main(context):
 
     if camera.parent is not None:
         if camera.parent.mmd_type == "CAMERA":
-            bpy.context.collection.objects.unlink(camera.parent)
+            context.collection.objects.unlink(camera.parent)
             bpy.ops.object.parent_clear(type="CLEAR_KEEP_TRANSFORM")
 
 

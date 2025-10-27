@@ -19,12 +19,12 @@ def main(context, swap_mat=True, swap_bone=True, swap_morph=True):
             m.name = m.mmd_material.name
 
     if swap_bone:
-        for o in bpy.context.scene.objects:
+        for o in context.scene.objects:
             if o.type == "ARMATURE":
                 o.data.show_names = True
-                bpy.context.view_layer.objects.active = o
+                context.view_layer.objects.active = o
                 bpy.ops.object.mode_set(mode="POSE")
-                for b in bpy.context.active_object.pose.bones:
+                for b in context.active_object.pose.bones:
                     name_j = b.mmd_bone.name_j
                     name_e = b.mmd_bone.name_e
                     if name_e != "":
@@ -36,7 +36,7 @@ def main(context, swap_mat=True, swap_bone=True, swap_morph=True):
     bpy.ops.object.mode_set(mode="OBJECT")
 
     if swap_morph:
-        for o in bpy.context.scene.objects:
+        for o in context.scene.objects:
             if o.mmd_type == "ROOT":
                 for vm in o.mmd_root.vertex_morphs:
                     name_j = vm.name

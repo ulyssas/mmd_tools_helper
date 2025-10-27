@@ -86,19 +86,19 @@ def rename_finger_bones(boneMap1, boneMap2, FINGER_BONE_NAMES_DICTIONARY):
 
 
 def main(context):
-    bpy.context.view_layer.objects.active = model.findArmature(bpy.context.active_object)
+    context.view_layer.objects.active = model.findArmature(context.active_object)
 
     unhide_all_armatures()
     BONE_NAMES_DICTIONARY = import_csv.use_csv_bones_dictionary()
     FINGER_BONE_NAMES_DICTIONARY = import_csv.use_csv_bones_fingers_dictionary()
     rename_bones(
-        bpy.context.scene.origin_armature_type,
-        bpy.context.scene.destination_armature_type,
+        context.scene.origin_armature_type,
+        context.scene.destination_armature_type,
         BONE_NAMES_DICTIONARY,
     )
     rename_finger_bones(
-        bpy.context.scene.origin_armature_type,
-        bpy.context.scene.destination_armature_type,
+        context.scene.origin_armature_type,
+        context.scene.destination_armature_type,
         FINGER_BONE_NAMES_DICTIONARY,
     )
     bpy.ops.object.mode_set(mode="POSE")

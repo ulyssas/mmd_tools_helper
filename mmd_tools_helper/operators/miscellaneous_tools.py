@@ -185,22 +185,22 @@ def correct_root_center():
 
 
 def main(context):
-    # print(bpy.context.scene.selected_misc_tools)
-    if bpy.context.scene.selected_misc_tools == "combine_2_bones":
-        bpy.context.view_layer.objects.active = model.findArmature(bpy.context.active_object)
+    # print(context.scene.selected_misc_tools)
+    if context.scene.selected_misc_tools == "combine_2_bones":
+        context.view_layer.objects.active = model.findArmature(context.active_object)
         parent_bone_name, child_bone_name = analyze_selected_parent_child_bone_pair()
         if parent_bone_name is not None:
             if child_bone_name is not None:
                 combine_2_vg_1_vg(parent_bone_name, child_bone_name)
                 combine_2_bones_1_bone(parent_bone_name, child_bone_name)
-    if bpy.context.scene.selected_misc_tools == "delete_unused":
-        bpy.context.view_layer.objects.active = model.findArmature(bpy.context.active_object)
+    if context.scene.selected_misc_tools == "delete_unused":
+        context.view_layer.objects.active = model.findArmature(context.active_object)
         delete_unused_bones()
         delete_unused_vertex_groups()
-    if bpy.context.scene.selected_misc_tools == "mmd_ambient_white":
+    if context.scene.selected_misc_tools == "mmd_ambient_white":
         all_materials_mmd_ambient_white()
-    if bpy.context.scene.selected_misc_tools == "correct_root_center":
-        bpy.context.view_layer.objects.active = model.findArmature(bpy.context.active_object)
+    if context.scene.selected_misc_tools == "correct_root_center":
+        context.view_layer.objects.active = model.findArmature(context.active_object)
         correct_root_center()
 
 
