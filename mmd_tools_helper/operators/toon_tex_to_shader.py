@@ -1,3 +1,5 @@
+import colorsys
+
 import bpy
 
 from .. import model, register_wrap
@@ -7,29 +9,67 @@ from .. import model, register_wrap
 # pixels are in left-to-right rows from bottom left to top right of image
 
 
-def toon_image_to_color_ramp(toon_texture_color_ramp, toon_image):
-    pixels_width = toon_image.size[0]
-    pixels_height = toon_image.size[1]
-    toon_image_pixels = []
-    toon_image_gradient = []
+def toon_image_to_color_ramp(toon_tex_color_ramp, toon_tex_node):
+    """Converts toon texture to monochrome color ramp. Returns start color for use in multiply_color."""
 
-    for f in range(0, len(toon_image.pixels), 4):
-        pixel_rgba = toon_image.pixels[f : f + 4]
-        toon_image_pixels.append(pixel_rgba)
+    def rgb_to_monochrome(colors, brightness=None):
+        """colors: list[r, g, b, a], brightness: float (for setting brightness)"""
 
-    for p in range(0, len(toon_image_pixels), int(len(toon_image_pixels) / 32)):
-        toon_image_gradient.append(toon_image_pixels[p])
+        r, g, b, _ = colors
+        h, s, v = colorsys.rgb_to_hsv(r, g, b)
+        if s > 0:
+            v = 1.0 - s
+        s = 0.0
+        if brightness is not None:
+            v = brightness
+        r, g, b = colorsys.hsv_to_rgb(h, s, v)
+        return [r, g, b, 1.0]
 
-    toon_texture_color_ramp.color_ramp.elements[0].color = toon_image_gradient[0]
-    toon_texture_color_ramp.color_ramp.elements[-1].color = toon_image_gradient[-1]
+    def get_rgb_brightness(colors):
+        r, g, b, _ = colors
+        _, _, v = colorsys.rgb_to_hsv(r, g, b)
+        return v
 
-    for i in range(1, len(toon_image_gradient) - 2, 1):
-        toon_texture_color_ramp.color_ramp.elements.new(i / (len(toon_image_gradient) - 1))
-        toon_texture_color_ramp.color_ramp.elements[i].color = toon_image_gradient[i]
-        if i > len(toon_image_gradient) / 2:
-            toon_texture_color_ramp.color_ramp.elements[i].color[3] = 0.0  # alpha of non-shadow colors set to 0.0
+    toon_image = toon_tex_node.image
+    width, height = toon_image.size
 
-    return
+    pixels_rgba = []
+    sample_count = 32
+    step = max(1, height // sample_count)
+    for y in range(0, height, step):
+        idx = (y * width + width // 2) * 4
+        pixels_rgba.append(toon_image.pixels[idx : idx + 4])
+
+    start_color = pixels_rgba[0]
+    end_color = pixels_rgba[-1]
+
+    mono_toon_gradient = [rgb_to_monochrome(c) for c in pixels_rgba]
+    print(f"before: {mono_toon_gradient}")
+
+    # normalize gradient (start color to black)
+    b_start = get_rgb_brightness(mono_toon_gradient[0])
+    if b_start < 1:
+        b_multiplier = 1 / (1 - b_start)
+        print(f"{b_multiplier}")
+        for i, s in enumerate(mono_toon_gradient):
+            normal_dimness = (1 - get_rgb_brightness(s)) * b_multiplier
+            print(f"normal dimness: {normal_dimness}")
+            mono_toon_gradient[i] = rgb_to_monochrome(s, 1 - normal_dimness)
+
+    print(f"after: {mono_toon_gradient}")
+
+    # reset color ramp
+    cr = toon_tex_color_ramp.color_ramp
+    while len(cr.elements) > 1:
+        cr.elements.remove(cr.elements[-1])
+
+    offset = 1 / (len(mono_toon_gradient) - 1)
+    for i, shade in enumerate(mono_toon_gradient):
+        pos = i * offset
+        s = cr.elements.new(pos) if i > 0 else cr.elements[0]
+        s.color = shade
+
+    return start_color
 
 
 def clear_nodes(nodes):
@@ -78,11 +118,19 @@ def main(context, clear_node=True):
             mmd_toon_tex = nodes.get("mmd_toon_tex")
             mmd_sphere_tex = nodes.get("mmd_sphere_tex")
 
+            shade_color = None
+            if mmd_toon_tex:
+                shade_color = toon_image_to_color_ramp(color_ramp, mmd_toon_tex)
+
             # for adding shading color
             mmd_base_tex = nodes.get("mmd_base_tex")
             multiply_color = nodes.new(type="ShaderNodeMixRGB")
             multiply_color.blend_type = "MULTIPLY"
             multiply_color.inputs[0].default_value = 1.0
+
+            multiply_color.inputs[2].default_value = (1.0, 1.0, 1.0, 1.0)
+            if shade_color:
+                multiply_color.inputs[2].default_value = shade_color
 
             # for no-shade material
             mix_color = nodes.new(type="ShaderNodeMixRGB")
