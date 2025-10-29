@@ -44,19 +44,14 @@ def toon_image_to_color_ramp(toon_tex_color_ramp, toon_tex_node):
     end_color = pixels_rgba[-1]
 
     mono_toon_gradient = [rgb_to_monochrome(c) for c in pixels_rgba]
-    print(f"before: {mono_toon_gradient}")
 
     # normalize gradient (start color to black)
     b_start = get_rgb_brightness(mono_toon_gradient[0])
     if b_start < 1:
         b_multiplier = 1 / (1 - b_start)
-        print(f"{b_multiplier}")
         for i, s in enumerate(mono_toon_gradient):
             normal_dimness = (1 - get_rgb_brightness(s)) * b_multiplier
-            print(f"normal dimness: {normal_dimness}")
             mono_toon_gradient[i] = rgb_to_monochrome(s, 1 - normal_dimness)
-
-    print(f"after: {mono_toon_gradient}")
 
     # reset color ramp
     cr = toon_tex_color_ramp.color_ramp
