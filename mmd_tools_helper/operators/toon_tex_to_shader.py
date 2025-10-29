@@ -55,6 +55,7 @@ def toon_image_to_color_ramp(toon_tex_color_ramp, toon_tex_node):
 
     # reset color ramp
     cr = toon_tex_color_ramp.color_ramp
+    cr.interpolation = "LINEAR"
     while len(cr.elements) > 1:
         cr.elements.remove(cr.elements[-1])
 
