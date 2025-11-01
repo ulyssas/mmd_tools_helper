@@ -40,11 +40,7 @@ jobs:
 
       - name: Create a zip
         run: |
-          (
-            cd mmd_tools_helper &&
-            find . -type f ! -path "*/.*" ! -path "*/__pycache__/*" -print |
-            zip -9r "../${{ env.zip_filename }}" -@
-          )
+          zip -9r "${{ env.zip_filename }}" mmd_tools_helper/ -x "*/.*" "*/__pycache__/*"
 
       - name: Create a Release
         id: create_release
