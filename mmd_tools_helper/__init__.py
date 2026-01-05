@@ -66,7 +66,7 @@ logging.basicConfig(format="%(message)s", level=logging.DEBUG)
 def register():
     for cls in __bl_classes:
         bpy.utils.register_class(cls)
-    print(__name__, "registed %d classes" % len(__bl_classes))
+    print(__name__, "registered %d classes" % len(__bl_classes))
 
 
 def unregister():

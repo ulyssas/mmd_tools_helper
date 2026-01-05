@@ -1,12 +1,12 @@
 
 In an MMD standard armature:
 
-The center(センター) bone does not have any vertex group. 
+The center(センター) bone does not have any vertex group.
 The root(全ての親) bone (aka mother bone, master parent bone) does not have any vertex group.
 The eyes(両目) bone does not have any vertex group.
 The 4 leg and foot IK bones also do not have any vertex group ("leg IK_L", "左足ＩＫ"),("leg IK_R", "右足ＩＫ"),("toe IK_L", "左つま先ＩＫ"),("toe IK_R", "右つま先ＩＫ").
 Every other bone in an MMD standard armature has a vertex group.
- 
+
 
 In an MMD standard armature:
 
@@ -39,7 +39,7 @@ Is it possible for an MMD character model to have some additional non-standard b
 Yes, it is possible. Here are a few examples:
 arm twist bones, one or two additional upper body bones, an additional thumb bone.
 
-You should look at the parent-child relations of the bones of a standard MMD armature. If bone A is child of bone B in a standard MMD armature, and you insert another bone, so that bone A is the child of the child of bone B, that should not cause an incompatibility problem with any VMD motions. 
+You should look at the parent-child relations of the bones of a standard MMD armature. If bone A is child of bone B in a standard MMD armature, and you insert another bone, so that bone A is the child of the child of bone B, that should not cause an incompatibility problem with any VMD motions.
 The exception to that is MMD leg-foot IK. Leg twist bones and other non-standard leg or foot bones, with few exceptions, make a mess out of MMD leg-foot IK.
 
 

@@ -1,0 +1,1 @@
+See the wiki: [Tutorial: How to convert a 3D character model to MMD](https://github.com/powroupi/blender_mmd_tools/wiki/Tutorial:-How-to-convert-a-3D-character-model-to-MMD)

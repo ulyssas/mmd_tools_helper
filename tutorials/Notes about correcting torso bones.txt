@@ -27,17 +27,17 @@ When converting a .vmd or other animation from MMD, models of other software whi
 HOW TO SOLVE ISSUES WITH MODELS OR ANIMATIONS WHICH HAVE MORE THAN 2 SPINE(UPPER BODY) BONES
 
 For example, each of these bone maps has 4 spine bones:
-Biped Bip001, Biped 3DS Max, Biped Source Film Maker, Valve Biped. 
-In Biped 3DS Max, for example, they are named spine, spine1, spine2, spine3. 
+Biped Bip001, Biped 3DS Max, Biped Source Film Maker, Valve Biped.
+In Biped 3DS Max, for example, they are named spine, spine1, spine2, spine3.
 
-The bones renamer operator of mmd_tools_helper renames the *spine1 bone of these armatures as being equivalent of the MMD upper body(上半身) bone, which should be the correct bone renaming in most cases. 
+The bones renamer operator of mmd_tools_helper renames the *spine1 bone of these armatures as being equivalent of the MMD upper body(上半身) bone, which should be the correct bone renaming in most cases.
 
 But when you are renaming the bones of armatures which have more than 2 spine/upper body bones, you should also do a manual test to see if the upper body(上半身) bone has been renamed correctly:
 
-The MMD upper body(上半身) bone is the bone that bends a character's body above the waist. You can check to see which spine bone is bending a character's body above the waist by simply selecting and rotating each spine(upper body) bone. 
+The MMD upper body(上半身) bone is the bone that bends a character's body above the waist. You can check to see which spine bone is bending a character's body above the waist by simply selecting and rotating each spine(upper body) bone.
 
 
 
 
 
-Typically in these armatures, the *spine bone is parent of the 2 thigh bones, but the *spine bone does not bend the character's body above the waist, so it is not equivalent to the MMD upper body bone. It is possible, however, that the maker of a model or animation does not follow that convention, in which case you need to manually test and rename spine(upper body) bones to be compatible with mmd_tools_helper bones renaming, or to have the correct naming of the MMD upper body bone(s). 
+Typically in these armatures, the *spine bone is parent of the 2 thigh bones, but the *spine bone does not bend the character's body above the waist, so it is not equivalent to the MMD upper body bone. It is possible, however, that the maker of a model or animation does not follow that convention, in which case you need to manually test and rename spine(upper body) bones to be compatible with mmd_tools_helper bones renaming, or to have the correct naming of the MMD upper body bone(s).
