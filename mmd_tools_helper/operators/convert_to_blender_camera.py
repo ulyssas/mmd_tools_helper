@@ -51,10 +51,10 @@ class MMDCameraToBlender(bpy.types.Operator):
 
         try:
             main(context)
+            self.report({"INFO"}, message="Successfully converted MMD camera")
         except Exception as e:
             self.report({"ERROR"}, message=f"Failed to convert MMD camera: {e}")
             return {"CANCELLED"}
         finally:
-            self.report({"INFO"}, message="Successfully converted MMD camera")
             bpy.ops.object.mode_set(mode=previous_mode)
         return {"FINISHED"}

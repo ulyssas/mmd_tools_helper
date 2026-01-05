@@ -77,10 +77,10 @@ class SwapJapaneseEnglish(bpy.types.Operator):
 
         try:
             swap_count = main(context, self.swap_mat, self.swap_bone, self.swap_morph)
+            self.report({"INFO"}, message=f"Swapped {swap_count} names")
         except Exception as e:
             self.report({"ERROR"}, message=f"Failed to swap japanese and english names: {e}")
             return {"CANCELLED"}
         finally:
-            self.report({"INFO"}, message=f"Swapped {swap_count} names")
             bpy.ops.object.mode_set(mode=previous_mode)
         return {"FINISHED"}

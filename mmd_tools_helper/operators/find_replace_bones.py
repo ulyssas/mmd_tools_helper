@@ -86,10 +86,10 @@ class FindReplaceBones(bpy.types.Operator):
 
         try:
             replace_count = main(context)
+            self.report({"INFO"}, message=f"Replaced {replace_count} entries")
         except Exception as e:
             self.report({"ERROR"}, message=f"Failed to find and replace bones: {e}")
             return {"CANCELLED"}
         finally:
-            self.report({"INFO"}, message=f"Replaced {replace_count} entries")
             bpy.ops.object.mode_set(mode=previous_mode)
         return {"FINISHED"}

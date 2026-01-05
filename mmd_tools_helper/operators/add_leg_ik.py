@@ -392,10 +392,10 @@ class AddMMDLegIK(bpy.types.Operator):
         try:
             clear_IK(context)
             main(context)
+            self.report({"INFO"}, message="Successfully added leg IK")
         except Exception as e:
             self.report({"ERROR"}, message=f"Failed to add leg IK: {e}")
             return {"CANCELLED"}
         finally:
-            self.report({"INFO"}, message="Successfully added leg IK")
             bpy.ops.object.mode_set(mode=previous_mode)
         return {"FINISHED"}

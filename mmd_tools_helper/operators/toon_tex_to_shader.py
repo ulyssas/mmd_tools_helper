@@ -220,10 +220,10 @@ class MMDToonTexToShader(bpy.types.Operator):
             for o in mesh_objects_list:
                 context.view_layer.objects.active = o
                 count = main(context, self.clear_node)
+            self.report({"INFO"}, message=f"Converted {count} materials")
         except Exception as e:
             self.report({"ERROR"}, message=f"Failed to add toon shaders: {e}")
             return {"CANCELLED"}
         finally:
-            self.report({"INFO"}, message=f"Converted {count} materials")
             bpy.ops.object.mode_set(mode=previous_mode)
         return {"FINISHED"}
