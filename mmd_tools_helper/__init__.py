@@ -2,13 +2,15 @@ bl_info = {
     "name": "MMD Tools Helper",
     "author": "Ulyssa",
     "version": (3, 0, 1),
-    "blender": (3, 0, 0),
+    "blender": (4, 0, 0),
     "location": "View3D > Tool Shelf > MMD Tools Helper",
     "description": "various helper scripts for MMD Tools",
     "warning": "",
     "wiki_url": "",
     "category": "Object",
 }
+
+PACKAGE_NAME = __package__
 
 __bl_classes = []
 
@@ -46,7 +48,11 @@ else:
 
     import bpy
 
-    __bpy_property = bpy.props._PropertyDeferred if hasattr(bpy.props, "_PropertyDeferred") else tuple
+    __bpy_property = (
+        bpy.props._PropertyDeferred
+        if hasattr(bpy.props, "_PropertyDeferred")
+        else tuple
+    )
     from . import model, panels
     from .operators import (
         add_arm_ik,
@@ -68,8 +74,13 @@ def register():
         bpy.utils.register_class(cls)
     print(__name__, "registered %d classes" % len(__bl_classes))
 
+    from .translations import translations_dict
+
+    bpy.app.translations.register(PACKAGE_NAME, translations_dict)
+
 
 def unregister():
+    bpy.app.translations.unregister(PACKAGE_NAME)
     for cls in reversed(__bl_classes):
         bpy.utils.unregister_class(cls)
 
