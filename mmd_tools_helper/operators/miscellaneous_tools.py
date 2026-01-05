@@ -3,12 +3,15 @@ import bpy
 from .. import model, register_wrap
 
 
-def all_materials_mmd_ambient_white():
-    for m in bpy.data.materials:
-        if "mmd_tools_rigid" not in m.name:
-            m.mmd_material.ambient_color[0] == 1.0
-            m.mmd_material.ambient_color[1] == 1.0
-            m.mmd_material.ambient_color[2] == 1.0
+def whiten_ambient_color(context):
+    o = context.active_object
+    if o.type != "MESH":
+        return
+
+    if o.data.materials is not None:
+        for m in o.data.materials:
+            if "mmd_tools_rigid" not in m.name:
+                m.mmd_material.ambient_color = (1.0, 1.0, 1.0)
 
 
 def combine_2_bones_1_bone(parent_bone_name, child_bone_name):
@@ -185,7 +188,6 @@ def correct_root_center():
 
 
 def main(context):
-    # print(context.scene.selected_misc_tools)
     if context.scene.selected_misc_tools == "combine_2_bones":
         context.view_layer.objects.active = model.findArmature(context.active_object)
         parent_bone_name, child_bone_name = analyze_selected_parent_child_bone_pair()
@@ -198,7 +200,7 @@ def main(context):
         delete_unused_bones()
         delete_unused_vertex_groups()
     if context.scene.selected_misc_tools == "mmd_ambient_white":
-        all_materials_mmd_ambient_white()
+        whiten_ambient_color(context)
     if context.scene.selected_misc_tools == "correct_root_center":
         context.view_layer.objects.active = model.findArmature(context.active_object)
         correct_root_center()
@@ -225,8 +227,8 @@ class MiscellaneousTools(bpy.types.Operator):
             ),
             (
                 "mmd_ambient_white",
-                "All materials MMD ambient color white",
-                "Change the MMD ambient color of all materials to white",
+                "Whiten ambient color",
+                "Change the MMD ambient color of the model to white",
             ),
             (
                 "correct_root_center",
