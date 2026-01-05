@@ -1,7 +1,7 @@
 bl_info = {
     "name": "MMD Tools Helper",
     "author": "Ulyssa",
-    "version": (3, 0, 0),
+    "version": (3, 0, 1),
     "blender": (3, 0, 0),
     "location": "View3D > Tool Shelf > MMD Tools Helper",
     "description": "various helper scripts for MMD Tools",
