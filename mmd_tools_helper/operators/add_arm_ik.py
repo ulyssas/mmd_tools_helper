@@ -299,7 +299,7 @@ def main(context):
 class AddMMDArmIK(bpy.types.Operator):
     bl_idname = "mmd_tools_helper.add_arm_ik"
     bl_label = "Add arm IK to MMD model"
-    bl_description = "Add hand and arm IK bones and constraints to active MMD model"
+    bl_description = 'Add hand and arm IK bones and constraints to active MMD model.\n\nWARNING: this DOES NOT produce "standard MMD arm IK" from IK Maker X'
     bl_options = {"REGISTER", "UNDO"}
 
     @classmethod
