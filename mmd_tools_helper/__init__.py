@@ -1,14 +1,22 @@
-bl_info = {
-    "name": "MMD Tools Helper",
-    "author": "Ulyssa",
-    "version": (3, 0, 1),
-    "blender": (4, 0, 0),
-    "location": "View3D > Tool Shelf > MMD Tools Helper",
-    "description": "various helper scripts for MMD Tools",
-    "warning": "",
-    "wiki_url": "",
-    "category": "Object",
-}
+# Don't worry, be happy, it's free! (GPL license)
+#     ~Hogarth-MMD
+
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+# Gnu General Public License
+# https://www.gnu.org/licenses/gpl.html
+#
+# ##### END GPL LICENSE BLOCK #####
 
 PACKAGE_NAME = __package__
 
