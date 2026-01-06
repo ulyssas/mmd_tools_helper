@@ -115,7 +115,7 @@ class ArmatureDiagnostic(bpy.types.Operator):
             ("iClone7", "iClone7 bone names", "iClone7 bone names"),
         ],
         name="Armature Type",
-        default="mmd_english",
+        default="mmd_japaneseLR",
     )
 
     # TODO actually add show_all_bones toggle

@@ -39,58 +39,6 @@ def clear_IK(context):
                 context.active_object.pose.bones[b].constraints.remove(c)
 
 
-def armature_diagnostic():
-    ENGLISH_ARM_BONES = [
-        "elbow_L",
-        "elbow_R",
-        "wrist_L",
-        "wrist_R",
-        "middle1_L",
-        "middle1_R",
-    ]
-    JAPANESE_ARM_BONES = [
-        "左ひじ",
-        "右ひじ",
-        "左手首",
-        "右手首",
-        "左中指１",
-        "右中指１",
-    ]
-    IK_BONE_NAMES = ["elbow IK_L", "elbow IK_R", "middle1 IK_L", "middle1 IK_R"]
-    ENGLISH_OK = True
-    JAPANESE_OK = True
-
-    print("\n\n\n", "These English bones are needed to add hand IK:", "\n")
-    print(ENGLISH_ARM_BONES, "\n")
-    for b in ENGLISH_ARM_BONES:
-        if b not in bpy.context.active_object.data.bones.keys():
-            ENGLISH_OK = False
-            print("This bone is not in this armature:", "\n", b)
-    if ENGLISH_OK:
-        print("OK! All English-named bones are present which are needed to add hand IK")
-
-    print("\n", "OR These Japanese bones are needed to add IK:", "\n")
-    print(JAPANESE_ARM_BONES, "\n")
-    for b in JAPANESE_ARM_BONES:
-        if b not in bpy.context.active_object.data.bones.keys():
-            JAPANESE_OK = False
-            print("This bone is not in this armature:", "\n", b)
-    if JAPANESE_OK:
-        print(
-            "OK! All Japanese-named bones are present which are needed to add hand IK",
-            "\n",
-        )
-
-    print("\n", "hand IK bones which are already in the armature = ", "\n")
-    for b in IK_BONE_NAMES:
-        if b in bpy.context.active_object.data.bones.keys():
-            print(
-                "This armature appears to already have hand IK bones. This bone seems to be a hand IK bone:",
-                "\n",
-                b,
-            )
-
-
 def main(context):
     context.view_layer.objects.active = model.findArmature(context.active_object)
 
@@ -281,18 +229,18 @@ def main(context):
         context.object.pose.bones[ELBOW_RIGHT].mmd_bone.ik_rotation_constraint = 4  # 180*4/math.pi
         context.object.pose.bones[ELBOW_LEFT].mmd_bone.ik_rotation_constraint = 4  # 180*4/math.pi
 
-    # create an 'IK' bone group and add the IK bones to it
-    if "IK" not in context.active_object.pose.bone_groups.keys():
-        context.active_object.pose.bone_groups.new(name="IK")
+    # create an 'IK' bone collection and add the IK bones to it
+    if "IK" not in context.active_object.data.collections.keys():
+        context.active_object.data.collections.new(name="IK")
 
-    context.active_object.pose.bones["elbow_IK_L"].bone_group = context.active_object.pose.bone_groups["IK"]
-    context.active_object.pose.bones["elbow_IK_R"].bone_group = context.active_object.pose.bone_groups["IK"]
-    context.active_object.pose.bones["middle1_IK_L"].bone_group = context.active_object.pose.bone_groups["IK"]
-    context.active_object.pose.bones["middle1_IK_R"].bone_group = context.active_object.pose.bone_groups["IK"]
-    context.active_object.pose.bones["elbow_IK_L_t"].bone_group = context.active_object.pose.bone_groups["IK"]
-    context.active_object.pose.bones["elbow_IK_R_t"].bone_group = context.active_object.pose.bone_groups["IK"]
-    context.active_object.pose.bones["middle1_IK_L_t"].bone_group = context.active_object.pose.bone_groups["IK"]
-    context.active_object.pose.bones["middle1_IK_R_t"].bone_group = context.active_object.pose.bone_groups["IK"]
+    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones["elbow_IK_L"])
+    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones["elbow_IK_R"])
+    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones["middle1_IK_L"])
+    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones["middle1_IK_R"])
+    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones["elbow_IK_L_t"])
+    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones["elbow_IK_R_t"])
+    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones["middle1_IK_L_t"])
+    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones["middle1_IK_R_t"])
 
 
 @register_wrap

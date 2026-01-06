@@ -21,7 +21,6 @@ def main(context, swap_mat=True, swap_bone=True, swap_morph=True):
     if swap_bone:
         for o in context.scene.objects:
             if o.type == "ARMATURE":
-                o.data.show_names = True
                 context.view_layer.objects.active = o
                 bpy.ops.object.mode_set(mode="POSE")
                 for b in context.active_object.pose.bones:

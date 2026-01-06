@@ -50,10 +50,10 @@ Converts MMD material into actual toon shader. It can convert toon texture to ma
 
 4 tools which may be helpful time-savers when converting character models to MMD. These 4 tools are:
 
-### Combine 2 bones (NOT TESTED)
+### Combine 2 bones
 
 Combines a parent-child pair of bones and their vertex groups to 1 bone and 1 vertex group.
-For this operator to run, exactly 2 bones must be selected, and one bone must be parent of the other bone.
+For this operator to run, you must be in Pose Mode, exactly 2 bones must be selected, and one bone must be parent of the other bone.
 
 ### Delete unused bones and unused vertex groups (NOT TESTED)
 

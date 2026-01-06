@@ -4,36 +4,6 @@ import bpy
 
 from .. import model, register_wrap
 
-# def armature_diagnostic():
-# ENGLISH_LEG_BONES = ["knee_L", "knee_R", "ankle_L", "ankle_R", "toe_L", "toe_R"]
-# JAPANESE_LEG_BONES = ["左ひざ", "右ひざ", "左足首", "右足首", "左つま先", "右つま先"]
-# IK_BONE_NAMES = ["leg IK_L", "leg IK_R", "toe IK_L", "toe IK_R", "左足ＩＫ", "右足ＩＫ", "左つま先ＩＫ", "右つま先ＩＫ"]
-# ENGLISH_OK = True
-# JAPANESE_OK = True
-
-# print('\n\n\n', 'These English bones are needed to add IK:', '\n')
-# print(ENGLISH_LEG_BONES, '\n')
-# for b in ENGLISH_LEG_BONES:
-# if b not in bpy.context.active_object.data.bones.keys():
-# ENGLISH_OK = False
-# print('This bone is not in this armature:', '\n', b)
-# if ENGLISH_OK == True:
-# print('OK! All English-named bones are present which are needed to add leg IK')
-
-# print('\n', 'OR These Japanese bones are needed to add IK:', '\n')
-# print(JAPANESE_LEG_BONES, '\n')
-# for b in JAPANESE_LEG_BONES:
-# if b not in bpy.context.active_object.data.bones.keys():
-# JAPANESE_OK = False
-# print('This bone is not in this armature:', '\n', b)
-# if JAPANESE_OK == True:
-# print('OK! All Japanese-named bones are present which are needed to add leg IK', '\n')
-
-# print('\n', 'IK bone names', '\n')
-# for b in IK_BONE_NAMES:
-# if b in bpy.context.active_object.data.bones.keys():
-# print('This armature appears to already have IK bones. This bone seems to be an IK bone:', '\n', b)
-
 
 def clear_IK(context):
     IK_target_bones = []
@@ -351,20 +321,18 @@ def main(context):
         context.object.pose.bones[ANKLE_RIGHT].mmd_bone.ik_rotation_constraint = 4  # 180*4/math.pi
         context.object.pose.bones[ANKLE_LEFT].mmd_bone.ik_rotation_constraint = 4  # 180*4/math.pi
 
-    # create an 'IK' bone group and add the IK bones to it
-    if "IK" not in context.active_object.pose.bone_groups.keys():
-        context.active_object.pose.bone_groups.new(name="IK")
+    # create an 'IK' bone collection and add the IK bones to it
+    if "IK" not in context.active_object.data.collections.keys():
+        context.active_object.data.collections.new(name="IK")
 
-    context.active_object.pose.bones[LEG_IK_LEFT_BONE].bone_group = context.active_object.pose.bone_groups["IK"]
-    context.active_object.pose.bones[LEG_IK_RIGHT_BONE].bone_group = context.active_object.pose.bone_groups["IK"]
-    context.active_object.pose.bones[TOE_IK_LEFT_BONE].bone_group = context.active_object.pose.bone_groups["IK"]
-    context.active_object.pose.bones[TOE_IK_RIGHT_BONE].bone_group = context.active_object.pose.bone_groups["IK"]
-    context.active_object.pose.bones[LEG_IK_LEFT_BONE_TIP].bone_group = context.active_object.pose.bone_groups["IK"]
-    context.active_object.pose.bones[LEG_IK_RIGHT_BONE_TIP].bone_group = context.active_object.pose.bone_groups["IK"]
-    context.active_object.pose.bones[TOE_IK_LEFT_BONE_TIP].bone_group = context.active_object.pose.bone_groups["IK"]
-    context.active_object.pose.bones[TOE_IK_RIGHT_BONE_TIP].bone_group = context.active_object.pose.bone_groups["IK"]
-
-    context.active_object.data.display_type = "OCTAHEDRAL"
+    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones[LEG_IK_LEFT_BONE])
+    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones[LEG_IK_RIGHT_BONE])
+    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones[TOE_IK_LEFT_BONE])
+    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones[TOE_IK_RIGHT_BONE])
+    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones[LEG_IK_LEFT_BONE_TIP])
+    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones[LEG_IK_RIGHT_BONE_TIP])
+    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones[TOE_IK_LEFT_BONE_TIP])
+    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones[TOE_IK_RIGHT_BONE_TIP])
 
 
 @register_wrap
