@@ -26,7 +26,7 @@ Select a bone map from the list menu, then click the button. A list of the bone 
 
 ### Replace bone names
 
-Finds the specified word in the bone names, and then replaces them. It's "find & replace" for the bone names. Useful for mass renaming names.
+Finds the specified word in the bone names, and then replaces them. It's "find & replace" for the bone names. Useful for mass renaming names. It supports RegEx as well.
 
 ### Batch rename bones
 
