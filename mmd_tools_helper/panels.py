@@ -53,6 +53,7 @@ class HelperRenameToolsPanel(bpy.types.Panel):
         layout.prop(context.scene, "find_bone_string")
         layout.prop(context.scene, "replace_bone_string")
         layout.prop(context.scene, "bones_all_or_selected")
+        layout.prop(context.scene, "use_regex")
         layout.operator(FindReplaceBones.bl_idname, text="Find & replace string in bone names")
 
         row = layout.row(align=True)

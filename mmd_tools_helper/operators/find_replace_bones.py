@@ -1,3 +1,5 @@
+import re
+
 import bpy
 
 from .. import model, register_wrap
@@ -6,23 +8,21 @@ from .. import model, register_wrap
 def main(context):
     replace_count = 0
     context.view_layer.objects.active = model.findArmature(context.active_object)
-    if context.scene.bones_all_or_selected:
-        for b in context.active_object.data.bones:
-            if b.select:
-                if "dummy" not in b.name and "shadow" not in b.name:
-                    b.name = b.name.replace(
-                        context.scene.find_bone_string,
-                        context.scene.replace_bone_string,
-                    )
-                    replace_count += 1
-    if not context.scene.bones_all_or_selected:
-        for b in context.active_object.data.bones:
-            if "dummy" not in b.name and "shadow" not in b.name:
+
+    for b in context.active_object.data.bones:
+        if context.scene.bones_all_or_selected and not b.select:
+            continue
+        if "dummy" not in b.name and "shadow" not in b.name:
+            if context.scene.use_regex:
+                b.name = re.sub(
+                    context.scene.find_bone_string, context.scene.replace_bone_string, b.name
+                )
+            else:
                 b.name = b.name.replace(
                     context.scene.find_bone_string,
                     context.scene.replace_bone_string,
                 )
-                replace_count += 1
+            replace_count += 1
 
     return replace_count
 
@@ -38,35 +38,24 @@ class FindReplaceBones(bpy.types.Operator):
         name="From",
         description="",
         default="",
-        maxlen=0,
-        options={"ANIMATABLE"},
-        subtype="NONE",
-        update=None,
-        get=None,
-        set=None,
     )
 
     bpy.types.Scene.replace_bone_string = bpy.props.StringProperty(
         name="To",
         description="",
         default="",
-        maxlen=0,
-        options={"ANIMATABLE"},
-        subtype="NONE",
-        update=None,
-        get=None,
-        set=None,
     )
 
     bpy.types.Scene.bones_all_or_selected = bpy.props.BoolProperty(
         name="Selected bones only",
         description="",
         default=False,
-        options={"ANIMATABLE"},
-        subtype="NONE",
-        update=None,
-        get=None,
-        set=None,
+    )
+
+    bpy.types.Scene.use_regex = bpy.props.BoolProperty(
+        name="Use Regular Expression",
+        description="",
+        default=False,
     )
 
     @classmethod
