@@ -13,6 +13,7 @@ def main(context):
         if context.scene.bones_all_or_selected and not b.select:
             continue
         if "dummy" not in b.name and "shadow" not in b.name:
+            old_name = b.name
             if context.scene.use_regex:
                 b.name = re.sub(
                     context.scene.find_bone_string, context.scene.replace_bone_string, b.name
@@ -22,7 +23,8 @@ def main(context):
                     context.scene.find_bone_string,
                     context.scene.replace_bone_string,
                 )
-            replace_count += 1
+            if old_name != b.name:
+                replace_count += 1
 
     return replace_count
 
