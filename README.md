@@ -55,9 +55,10 @@ Converts MMD material into actual toon shader. It can convert toon texture to ma
 Combines a parent-child pair of bones and their vertex groups to 1 bone and 1 vertex group.
 For this operator to run, you must be in Pose Mode, exactly 2 bones must be selected, and one bone must be parent of the other bone.
 
-### Delete unused bones and unused vertex groups (NOT TESTED)
+### Delete unused bones and unused vertex groups
 
 Deletes all bones and all vertex groups which have the word 'unused' (or Unused or UnUsEd or etc.) in them.
+For example, you can mark bones as "unused" by renaming them, them delete in one go.
 
 ### Whiten ambient color
 
