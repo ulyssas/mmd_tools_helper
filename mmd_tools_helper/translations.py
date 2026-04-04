@@ -13,62 +13,131 @@ translations_tuple = (
     (
         ("*", ""),
         ((), ()),
-        ("ja_JP", "MMD Tools Helper 4.0.0 (0)", (False, ("FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.",))),
+        ("ja_JP", "MMD Tools Helper 4.0.2 (0)", (False, ("FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.",))),
     ),
     (
         ("Operator", "Add arm IK to MMD model"),
-        (("bpy.types.MMD_TOOLS_HELPER_OT_add_arm_ik", "bpy.types.MMD_TOOLS_HELPER_OT_add_arm_ik"), ()),
+        (
+            (
+                "bpy.types.MMD_TOOLS_HELPER_OT_add_arm_ik",
+                "bpy.types.MMD_TOOLS_HELPER_OT_add_arm_ik",
+            ),
+            (),
+        ),
         ("ja_JP", "腕IKをMMDモデルに追加", (False, ())),
     ),
     (
         ("Operator", "Add leg IK to MMD model"),
-        (("bpy.types.MMD_TOOLS_HELPER_OT_add_leg_ik", "bpy.types.MMD_TOOLS_HELPER_OT_add_leg_ik"), ()),
+        (
+            (
+                "bpy.types.MMD_TOOLS_HELPER_OT_add_leg_ik",
+                "bpy.types.MMD_TOOLS_HELPER_OT_add_leg_ik",
+            ),
+            (),
+        ),
         ("ja_JP", "足IKをMMDモデルに追加", (False, ())),
     ),
     (
         ("Operator", "Armature Diagnostic"),
-        (("bpy.types.MMD_TOOLS_HELPER_OT_armature_diagnostic", "bpy.types.MMD_TOOLS_HELPER_OT_armature_diagnostic"), ()),
+        (
+            (
+                "bpy.types.MMD_TOOLS_HELPER_OT_armature_diagnostic",
+                "bpy.types.MMD_TOOLS_HELPER_OT_armature_diagnostic",
+            ),
+            (),
+        ),
         ("ja_JP", "アーマチュア診断", (False, ())),
     ),
     (
         ("Operator", "Batch rename bones"),
-        (("bpy.types.MMD_TOOLS_HELPER_OT_bone_batch_rename", "bpy.types.MMD_TOOLS_HELPER_OT_bone_batch_rename", "scripts/addons/mmd_tools_helper/panels.py:62"), ()),
+        (
+            (
+                "bpy.types.MMD_TOOLS_HELPER_OT_bone_batch_rename",
+                "bpy.types.MMD_TOOLS_HELPER_OT_bone_batch_rename",
+                "scripts/addons/mmd_tools_helper/panels.py:62",
+            ),
+            (),
+        ),
         ("ja_JP", "ボーン名の一括変更", (False, ())),
     ),
     (
         ("Operator", "Copy Report"),
-        (("bpy.types.MMD_TOOLS_HELPER_OT_copy_diagnostic_result", "bpy.types.MMD_TOOLS_HELPER_OT_copy_diagnostic_result", "scripts/addons/mmd_tools_helper/operators/armature_diagnostic.py:160"), ()),
+        (
+            (
+                "bpy.types.MMD_TOOLS_HELPER_OT_copy_diagnostic_result",
+                "bpy.types.MMD_TOOLS_HELPER_OT_copy_diagnostic_result",
+                "scripts/addons/mmd_tools_helper/operators/armature_diagnostic.py:160",
+            ),
+            (),
+        ),
         ("ja_JP", "結果をコピー", (False, ())),
     ),
     (
         ("Operator", "Find and replace bone names"),
-        (("bpy.types.MMD_TOOLS_HELPER_OT_find_replace_bones", "bpy.types.MMD_TOOLS_HELPER_OT_find_replace_bones"), ()),
+        (
+            (
+                "bpy.types.MMD_TOOLS_HELPER_OT_find_replace_bones",
+                "bpy.types.MMD_TOOLS_HELPER_OT_find_replace_bones",
+            ),
+            (),
+        ),
         ("ja_JP", "ボーン名の検索と置換", (False, ())),
     ),
     (
         ("Operator", "Miscellaneous Tools"),
-        (("bpy.types.MMD_TOOLS_HELPER_OT_misc_tools", "bpy.types.MMD_TOOLS_HELPER_OT_misc_tools"), ()),
+        (
+            (
+                "bpy.types.MMD_TOOLS_HELPER_OT_misc_tools",
+                "bpy.types.MMD_TOOLS_HELPER_OT_misc_tools",
+            ),
+            (),
+        ),
         ("ja_JP", "その他ツール", (False, ())),
     ),
     (
         ("Operator", "Convert MMD Camera to Blender"),
-        (("bpy.types.MMD_TOOLS_HELPER_OT_mmd_camera_to_blender", "bpy.types.MMD_TOOLS_HELPER_OT_mmd_camera_to_blender"), ()),
+        (
+            (
+                "bpy.types.MMD_TOOLS_HELPER_OT_mmd_camera_to_blender",
+                "bpy.types.MMD_TOOLS_HELPER_OT_mmd_camera_to_blender",
+            ),
+            (),
+        ),
         ("ja_JP", "MMDカメラをBlender用に変換", (False, ())),
     ),
     (
         ("Operator", "Convert MMD Toon to Toon Shader"),
-        (("bpy.types.MMD_TOOLS_HELPER_OT_mmd_toon_shader", "bpy.types.MMD_TOOLS_HELPER_OT_mmd_toon_shader"), ()),
+        (
+            (
+                "bpy.types.MMD_TOOLS_HELPER_OT_mmd_toon_shader",
+                "bpy.types.MMD_TOOLS_HELPER_OT_mmd_toon_shader",
+            ),
+            (),
+        ),
         ("ja_JP", "MMD Toonをトゥーンシェーダーに変換", (False, ())),
     ),
     (
         ("Operator", "Swap Japanese and English names"),
-        (("bpy.types.MMD_TOOLS_HELPER_OT_swap_japanese_english", "bpy.types.MMD_TOOLS_HELPER_OT_swap_japanese_english"), ()),
+        (
+            (
+                "bpy.types.MMD_TOOLS_HELPER_OT_swap_japanese_english",
+                "bpy.types.MMD_TOOLS_HELPER_OT_swap_japanese_english",
+            ),
+            (),
+        ),
         ("ja_JP", "日本語名と英語名を入れ替える", (False, ())),
     ),
     (
-        ("*", 'Add hand and arm IK bones and constraints to active MMD model.\n\nWARNING: this DOES NOT produce "standard MMD arm IK" from IK Maker X'),
+        (
+            "*",
+            'Add hand and arm IK bones and constraints to active MMD model.\n\nWARNING: this DOES NOT produce "standard MMD arm IK" from IK Maker X',
+        ),
         (("bpy.types.MMD_TOOLS_HELPER_OT_add_arm_ik",), ()),
-        ("ja_JP", "手と腕のIKボーンとコンストレイントをMMDモデルに追加します.\n\n警告: IK Maker Xが作るIKとは異なります (不具合あり)", (False, ())),
+        (
+            "ja_JP",
+            "手と腕のIKボーンとコンストレイントをMMDモデルに追加します.\n\n警告: IK Maker Xが作るIKとは異なります (不具合あり)",
+            (False, ()),
+        ),
     ),
     (
         ("*", "Add foot and leg IK bones and constraints to active MMD model"),
