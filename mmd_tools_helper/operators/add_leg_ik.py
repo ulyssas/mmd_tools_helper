@@ -47,25 +47,77 @@ def clear_IK(context):
 
 
 def main(context):
+    def add_ik_limit(pbone: bpy.types.PoseBone):
+        pbone.use_ik_limit_x = True
+        pbone.use_ik_limit_y = True
+        pbone.use_ik_limit_z = True
+        pbone.ik_min_x = 0
+        pbone.ik_max_x = math.pi
+        pbone.ik_min_y = 0
+        pbone.ik_max_y = 0
+        pbone.ik_min_z = 0
+        pbone.ik_max_z = 0
+
+    def add_ik_constraint(
+        pbone: bpy.types.PoseBone,
+        subtarget: str,
+        chain_count: int,
+        iterations: int,
+    ):
+        constraint = pbone.constraints.new("IK")
+        constraint.target = raw_object
+        constraint.subtarget = subtarget
+        constraint.chain_count = chain_count
+        constraint.iterations = iterations
+
+    def add_limit_rot(pbone: bpy.types.PoseBone):
+        constraint = pbone.constraints.new("LIMIT_ROTATION")
+        constraint.name = "mmd_ik_limit_override"
+        constraint.use_limit_x = True
+        constraint.use_limit_y = False
+        constraint.use_limit_z = False
+        constraint.min_x = math.pi / 360  # radians=0.5 degrees
+        constraint.max_x = math.pi  # radians=180 degrees
+        constraint.min_y = 0
+        constraint.max_y = 0
+        constraint.min_z = 0
+        constraint.max_z = 0
+        constraint.owner_space = "LOCAL"
+
+    def create_ik_bone(name: str, target: str, parent: str) -> bpy.types.EditBone:
+        bone = raw_armature.edit_bones.new(name)
+        bone.head = raw_armature.edit_bones[target].head
+        bone.tail = raw_armature.edit_bones[target].head
+        bone.use_deform = False
+        if parent in raw_armature.edit_bones.keys():
+            print(parent, parent in raw_armature.edit_bones.keys())
+            bone.parent = raw_armature.edit_bones[parent]
+            print(bone, bone.parent)
+        return bone
+
     context.view_layer.objects.active = model.findArmature(context.active_object)
+    raw_object: bpy.types.Object = context.active_object
+    raw_armature: bpy.types.Armature = context.active_object.data
 
     # test japanese or english ("leg_R", "右足"), ("leg_L", "左足"),
     english = ["knee_L", "knee_R", "ankle_L", "ankle_R", "toe_L", "toe_R"]
     japanese = ["左ひざ", "右ひざ", "左足首", "右足首", "左つま先", "右つま先"]
     japanese_L_R = ["ひざ.L", "ひざ.R", "足首.L", "足首.R", "つま先.L", "つま先.R"]
 
-    keys = context.active_object.data.bones.keys()
+    keys = raw_armature.bones.keys()
 
-    english_bones = all([e in keys for e in english])
-    japanese_bones = all([j in keys for j in japanese])
-    japanese_bones_L_R = all([j in keys for j in japanese_L_R])
+    english_bones = all(e in keys for e in english)
+    japanese_bones = all(j in keys for j in japanese)
+    japanese_bones_L_R = all(j in keys for j in japanese_L_R)
 
     print("english_bones =", english_bones)
     print("japanese_bones =", japanese_bones)
     print("japanese_bones_L_R =", japanese_bones_L_R)
     print("\n\n")
 
-    assert english_bones or japanese_bones or japanese_bones_L_R, "This is not an MMD armature. MMD bone names of knee, ankle and toe bones are required for this script to run."
+    assert english_bones or japanese_bones or japanese_bones_L_R, (
+        "This is not an MMD armature. MMD bone names of knee, ankle and toe bones are required for this script to run."
+    )
 
     IK_BONE_NAMES = [
         "leg IK_L",
@@ -81,258 +133,102 @@ def main(context):
         "つま先ＩＫ.L",
         "つま先ＩＫ.R",
     ]
-    ik_bones = any([ik in keys for ik in IK_BONE_NAMES])
+    ik_bones = any(ik in keys for ik in IK_BONE_NAMES)
 
     assert not ik_bones, "This armature already has MMD IK bone names."
 
     if english_bones:
-        LEG_IK_LEFT_BONE = "leg IK_L"
-        LEG_IK_RIGHT_BONE = "leg IK_R"
-        TOE_IK_LEFT_BONE = "toe IK_L"
-        TOE_IK_RIGHT_BONE = "toe IK_R"
-        LEG_IK_LEFT_BONE_TIP = "leg IK_L_t"
-        LEG_IK_RIGHT_BONE_TIP = "leg IK_R_t"
-        TOE_IK_LEFT_BONE_TIP = "toe IK_L_t"
-        TOE_IK_RIGHT_BONE_TIP = "toe IK_R_t"
+        LEG_IK_L = "leg IK_L"
+        LEG_IK_R = "leg IK_R"
+        TOE_IK_L = "toe IK_L"
+        TOE_IK_R = "toe IK_R"
         ROOT = "root"
 
     if japanese_bones or japanese_bones_L_R:
-        LEG_IK_LEFT_BONE = "左足ＩＫ"
-        LEG_IK_RIGHT_BONE = "右足ＩＫ"
-        TOE_IK_LEFT_BONE = "左つま先ＩＫ"
-        TOE_IK_RIGHT_BONE = "右つま先ＩＫ"
-        LEG_IK_LEFT_BONE_TIP = "左足ＩＫ先"
-        LEG_IK_RIGHT_BONE_TIP = "右足ＩＫ先"
-        TOE_IK_LEFT_BONE_TIP = "左つま先ＩＫ先"
-        TOE_IK_RIGHT_BONE_TIP = "右つま先ＩＫ先"
+        LEG_IK_L = "左足ＩＫ"
+        LEG_IK_R = "右足ＩＫ"
+        TOE_IK_L = "左つま先ＩＫ"
+        TOE_IK_R = "右つま先ＩＫ"
         ROOT = "全ての親"
 
         # Lists of possible names of knee, ankle and toe bones
-    KNEE_LEFT_BONES = ["knee_L", "左ひざ", "ひざ.L"]
-    KNEE_RIGHT_BONES = ["knee_R", "右ひざ", "ひざ.R"]
-    ANKLE_LEFT_BONES = ["ankle_L", "左足首", "足首.L"]
-    ANKLE_RIGHT_BONES = ["ankle_R", "右足首", "足首.R"]
-    TOE_LEFT_BONES = ["toe_L", "左つま先", "つま先.L"]
-    TOE_RIGHT_BONES = ["toe_R", "右つま先", "つま先.R"]
+    KNEE_L_LIST = ["knee_L", "左ひざ", "ひざ.L"]
+    KNEE_R_LIST = ["knee_R", "右ひざ", "ひざ.R"]
+    ANKLE_L_LIST = ["ankle_L", "左足首", "足首.L"]
+    ANKLE_R_LIST = ["ankle_R", "右足首", "足首.R"]
+    TOE_L_LIST = ["toe_L", "左つま先", "つま先.L"]
+    TOE_R_LIST = ["toe_R", "右つま先", "つま先.R"]
 
     print("\n")
     # Searches through the bones of the active armature and finds the knee, ankle and toe bones.
-    for b in context.active_object.data.bones:
-        if b.name in KNEE_LEFT_BONES:
-            KNEE_LEFT = b.name
-            print("KNEE_LEFT = ", KNEE_LEFT)
-        if b.name in KNEE_RIGHT_BONES:
-            KNEE_RIGHT = b.name
-            print("KNEE_RIGHT = ", KNEE_RIGHT)
-        if b.name in ANKLE_LEFT_BONES:
-            ANKLE_LEFT = b.name
-            print("ANKLE_LEFT = ", ANKLE_LEFT)
-        if b.name in ANKLE_RIGHT_BONES:
-            ANKLE_RIGHT = b.name
-            print("ANKLE_RIGHT = ", ANKLE_RIGHT)
-        if b.name in TOE_LEFT_BONES:
-            TOE_LEFT = b.name
-            print("TOE_LEFT = ", TOE_LEFT)
-        if b.name in TOE_RIGHT_BONES:
-            TOE_RIGHT = b.name
-            print("TOE_RIGHT = ", TOE_RIGHT)
+    for b in raw_armature.bones:
+        if b.name in KNEE_L_LIST:
+            KNEE_L = b.name
+            print("KNEE_L = ", KNEE_L)
+        if b.name in KNEE_R_LIST:
+            KNEE_R = b.name
+            print("KNEE_R = ", KNEE_R)
+        if b.name in ANKLE_L_LIST:
+            ANKLE_L = b.name
+            print("ANKLE_L = ", ANKLE_L)
+        if b.name in ANKLE_R_LIST:
+            ANKLE_R = b.name
+            print("ANKLE_R = ", ANKLE_R)
+        if b.name in TOE_L_LIST:
+            TOE_L = b.name
+            print("TOE_L = ", TOE_L)
+        if b.name in TOE_R_LIST:
+            TOE_R = b.name
+            print("TOE_R = ", TOE_R)
 
     bpy.ops.object.mode_set(mode="POSE")
-    context.active_object.pose.bones[KNEE_LEFT].use_ik_limit_x = True
-    context.active_object.pose.bones[KNEE_RIGHT].use_ik_limit_x = True
+
+    add_ik_limit(raw_object.pose.bones[KNEE_L])
+    add_ik_limit(raw_object.pose.bones[KNEE_R])
 
     # measurements of the length of the foot bone which will used to calculate the lengths of the IK bones.
-    LENGTH_OF_FOOT_BONE = context.active_object.data.bones[ANKLE_LEFT].length
-    HALF_LENGTH_OF_FOOT_BONE = context.active_object.data.bones[ANKLE_LEFT].length * 0.5
-    TWENTIETH_LENGTH_OF_FOOT_BONE = context.active_object.data.bones[ANKLE_LEFT].length * 0.05
+    FOOT_LENGTH = raw_armature.bones[ANKLE_L].length
 
     bpy.ops.object.mode_set(mode="EDIT")
 
     # The IK bones are created
-    bone = context.active_object.data.edit_bones.new(LEG_IK_LEFT_BONE)
-    bone.head = context.active_object.data.edit_bones[ANKLE_LEFT].head
-    bone.tail = context.active_object.data.edit_bones[ANKLE_LEFT].head
-    bone.tail.y = context.active_object.data.edit_bones[ANKLE_LEFT].head.y + LENGTH_OF_FOOT_BONE
-    if ROOT in context.active_object.data.edit_bones.keys():
-        print(ROOT, ROOT in context.active_object.data.edit_bones.keys())
-        bone.parent = context.active_object.data.edit_bones[ROOT]
-        print(bone, bone.parent)
+    bone = create_ik_bone(LEG_IK_L, ANKLE_L, ROOT)
+    bone.tail.y = raw_armature.edit_bones[ANKLE_L].head.y + FOOT_LENGTH
 
-    bone = context.active_object.data.edit_bones.new(LEG_IK_RIGHT_BONE)
-    bone.head = context.active_object.data.edit_bones[ANKLE_RIGHT].head
-    bone.tail = context.active_object.data.edit_bones[ANKLE_RIGHT].head
-    bone.tail.y = context.active_object.data.edit_bones[ANKLE_RIGHT].head.y + LENGTH_OF_FOOT_BONE
-    if ROOT in context.active_object.data.edit_bones.keys():
-        print(ROOT, ROOT in context.active_object.data.edit_bones.keys())
-        bone.parent = context.active_object.data.edit_bones[ROOT]
-        print(bone, bone.parent)
+    bone = create_ik_bone(LEG_IK_R, ANKLE_R, ROOT)
+    bone.tail.y = raw_armature.edit_bones[ANKLE_R].head.y + FOOT_LENGTH
 
-    bone = context.active_object.data.edit_bones.new(TOE_IK_LEFT_BONE)
-    bone.head = context.active_object.data.edit_bones[TOE_LEFT].head
-    bone.tail = context.active_object.data.edit_bones[TOE_LEFT].head
-    bone.tail.z = context.active_object.data.edit_bones[TOE_LEFT].head.z - HALF_LENGTH_OF_FOOT_BONE
-    print("bone = ", bone)
-    bone.parent = context.active_object.data.edit_bones[LEG_IK_LEFT_BONE]
-    bone.use_connect = False
+    bone = create_ik_bone(TOE_IK_L, TOE_L, LEG_IK_L)
+    bone.tail.z = raw_armature.edit_bones[TOE_L].head.z - FOOT_LENGTH * 0.5
 
-    bone = context.active_object.data.edit_bones.new(TOE_IK_RIGHT_BONE)
-    bone.head = context.active_object.data.edit_bones[TOE_RIGHT].head
-    bone.tail = context.active_object.data.edit_bones[TOE_RIGHT].head
-    bone.tail.z = context.active_object.data.edit_bones[TOE_RIGHT].head.z - HALF_LENGTH_OF_FOOT_BONE
-    bone.parent = context.active_object.data.edit_bones[LEG_IK_RIGHT_BONE]
-    bone.use_connect = False
-
-    bone = context.active_object.data.edit_bones.new(LEG_IK_LEFT_BONE_TIP)
-    bone.head = context.active_object.data.edit_bones[LEG_IK_LEFT_BONE].head
-    bone.tail = context.active_object.data.edit_bones[LEG_IK_LEFT_BONE].head
-    bone.tail.y = bone.tail.y + TWENTIETH_LENGTH_OF_FOOT_BONE
-    bone.parent = context.active_object.data.edit_bones[LEG_IK_LEFT_BONE]
-    bone.use_connect = False
-    bpy.ops.object.mode_set(mode="POSE")
-    # if "leg IK_L_t" in context.active_object.pose.bones.keys():
-    context.active_object.pose.bones[LEG_IK_LEFT_BONE_TIP].bone.hide = True
-    if hasattr(context.active_object.pose.bones[LEG_IK_LEFT_BONE_TIP], "mmd_bone"):
-        context.active_object.pose.bones[LEG_IK_LEFT_BONE_TIP].mmd_bone.is_visible = False
-        context.active_object.pose.bones[LEG_IK_LEFT_BONE_TIP].mmd_bone.is_controllable = False
-        context.active_object.pose.bones[LEG_IK_LEFT_BONE_TIP].mmd_bone.is_tip = True
-    bpy.ops.object.mode_set(mode="EDIT")
-
-    bone = context.active_object.data.edit_bones.new(LEG_IK_RIGHT_BONE_TIP)
-    bone.head = context.active_object.data.edit_bones[LEG_IK_RIGHT_BONE].head
-    bone.tail = context.active_object.data.edit_bones[LEG_IK_RIGHT_BONE].head
-    bone.tail.y = bone.tail.y + TWENTIETH_LENGTH_OF_FOOT_BONE
-    bone.parent = context.active_object.data.edit_bones[LEG_IK_RIGHT_BONE]
-    bone.use_connect = False
-    bpy.ops.object.mode_set(mode="POSE")
-    # if "leg IK_R_t" in context.active_object.pose.bones.keys():
-    context.active_object.pose.bones[LEG_IK_RIGHT_BONE_TIP].bone.hide = True
-    if hasattr(context.active_object.pose.bones[LEG_IK_RIGHT_BONE_TIP], "mmd_bone"):
-        context.active_object.pose.bones[LEG_IK_RIGHT_BONE_TIP].mmd_bone.is_visible = False
-        context.active_object.pose.bones[LEG_IK_RIGHT_BONE_TIP].mmd_bone.is_controllable = False
-        context.active_object.pose.bones[LEG_IK_RIGHT_BONE_TIP].mmd_bone.is_tip = True
-    bpy.ops.object.mode_set(mode="EDIT")
-
-    bone = context.active_object.data.edit_bones.new(TOE_IK_LEFT_BONE_TIP)
-    bone.head = context.active_object.data.edit_bones[TOE_IK_LEFT_BONE].head
-    bone.tail = context.active_object.data.edit_bones[TOE_IK_LEFT_BONE].head
-    bone.tail.z = bone.tail.z - TWENTIETH_LENGTH_OF_FOOT_BONE
-    bone.parent = context.active_object.data.edit_bones[TOE_IK_LEFT_BONE]
-    bone.use_connect = False
-    bpy.ops.object.mode_set(mode="POSE")
-    # if "toe IK_L_t" in context.active_object.pose.bones.keys():
-    context.active_object.pose.bones[TOE_IK_LEFT_BONE_TIP].bone.hide = True
-    if hasattr(context.active_object.pose.bones[TOE_IK_LEFT_BONE_TIP], "mmd_bone"):
-        context.active_object.pose.bones[TOE_IK_LEFT_BONE_TIP].mmd_bone.is_visible = False
-        context.active_object.pose.bones[TOE_IK_LEFT_BONE_TIP].mmd_bone.is_controllable = False
-        context.active_object.pose.bones[TOE_IK_LEFT_BONE_TIP].mmd_bone.is_tip = True
-    bpy.ops.object.mode_set(mode="EDIT")
-
-    bone = context.active_object.data.edit_bones.new(TOE_IK_RIGHT_BONE_TIP)
-    bone.head = context.active_object.data.edit_bones[TOE_IK_RIGHT_BONE].head
-    bone.tail = context.active_object.data.edit_bones[TOE_IK_RIGHT_BONE].head
-    bone.tail.z = bone.tail.z - TWENTIETH_LENGTH_OF_FOOT_BONE
-    bone.parent = context.active_object.data.edit_bones[TOE_IK_RIGHT_BONE]
-    bone.use_connect = False
-    bpy.ops.object.mode_set(mode="POSE")
-    # if "toe IK_R_t" in context.active_object.pose.bones.keys():
-    context.active_object.pose.bones[TOE_IK_RIGHT_BONE_TIP].bone.hide = True
-    if hasattr(context.active_object.pose.bones[TOE_IK_RIGHT_BONE_TIP], "mmd_bone"):
-        context.active_object.pose.bones[TOE_IK_RIGHT_BONE_TIP].mmd_bone.is_visible = False
-        context.active_object.pose.bones[TOE_IK_RIGHT_BONE_TIP].mmd_bone.is_controllable = False
-        context.active_object.pose.bones[TOE_IK_RIGHT_BONE_TIP].mmd_bone.is_tip = True
-    bpy.ops.object.mode_set(mode="EDIT")
+    bone = create_ik_bone(TOE_IK_R, TOE_R, LEG_IK_R)
+    bone.tail.z = raw_armature.edit_bones[TOE_R].head.z - FOOT_LENGTH * 0.5
 
     bpy.ops.object.mode_set(mode="POSE")
 
     # Adds IK constraints
-    context.object.pose.bones[KNEE_LEFT].constraints.new("IK")
-    context.object.pose.bones[KNEE_LEFT].constraints["IK"].target = context.active_object
-    context.object.pose.bones[KNEE_LEFT].constraints["IK"].subtarget = LEG_IK_LEFT_BONE
-    context.object.pose.bones[KNEE_LEFT].constraints["IK"].chain_count = 2
-    context.object.pose.bones[KNEE_LEFT].constraints["IK"].use_tail = True
-    context.object.pose.bones[KNEE_LEFT].constraints["IK"].iterations = 48
+    add_ik_constraint(raw_object.pose.bones[KNEE_L], LEG_IK_L, 2, 200)
+    add_ik_constraint(raw_object.pose.bones[KNEE_R], LEG_IK_R, 2, 200)
+    add_ik_constraint(raw_object.pose.bones[ANKLE_L], TOE_IK_L, 1, 15)
+    add_ik_constraint(raw_object.pose.bones[ANKLE_R], TOE_IK_R, 1, 15)
 
-    context.object.pose.bones[KNEE_LEFT].constraints.new("LIMIT_ROTATION")
-    context.object.pose.bones[KNEE_LEFT].constraints["Limit Rotation"].use_limit_x = True
-    context.object.pose.bones[KNEE_LEFT].constraints["Limit Rotation"].use_limit_y = True
-    context.object.pose.bones[KNEE_LEFT].constraints["Limit Rotation"].use_limit_z = True
-    context.object.pose.bones[KNEE_LEFT].constraints["Limit Rotation"].min_x = math.pi / 360  # radians = 0.5 degrees
-    context.object.pose.bones[KNEE_LEFT].constraints["Limit Rotation"].max_x = math.pi  # radians = 180 degrees
+    add_limit_rot(raw_object.pose.bones[KNEE_L])
+    add_limit_rot(raw_object.pose.bones[KNEE_R])
 
-    context.object.pose.bones[KNEE_LEFT].constraints["Limit Rotation"].min_y = 0
-    context.object.pose.bones[KNEE_LEFT].constraints["Limit Rotation"].max_y = 0
-    context.object.pose.bones[KNEE_LEFT].constraints["Limit Rotation"].min_z = 0
-    context.object.pose.bones[KNEE_LEFT].constraints["Limit Rotation"].max_z = 0
-
-    context.object.pose.bones[KNEE_LEFT].constraints["Limit Rotation"].owner_space = "POSE"
-    context.object.pose.bones[KNEE_LEFT].constraints["Limit Rotation"].name = "mmd_ik_limit_override"
-
-    context.object.pose.bones[KNEE_RIGHT].constraints.new("IK")
-    context.object.pose.bones[KNEE_RIGHT].constraints["IK"].target = context.active_object
-    context.object.pose.bones[KNEE_RIGHT].constraints["IK"].subtarget = LEG_IK_RIGHT_BONE
-    context.object.pose.bones[KNEE_RIGHT].constraints["IK"].chain_count = 2
-    context.object.pose.bones[KNEE_RIGHT].constraints["IK"].use_tail = True
-    context.object.pose.bones[KNEE_RIGHT].constraints["IK"].iterations = 48
-
-    context.object.pose.bones[KNEE_RIGHT].constraints.new("LIMIT_ROTATION")
-    context.object.pose.bones[KNEE_RIGHT].constraints["Limit Rotation"].use_limit_x = True
-    context.object.pose.bones[KNEE_RIGHT].constraints["Limit Rotation"].use_limit_y = True
-    context.object.pose.bones[KNEE_RIGHT].constraints["Limit Rotation"].use_limit_z = True
-    context.object.pose.bones[KNEE_RIGHT].constraints["Limit Rotation"].min_x = math.pi / 360  # radians = 0.5 degrees
-    context.object.pose.bones[KNEE_RIGHT].constraints["Limit Rotation"].max_x = math.pi  # radians = 180 degrees
-
-    context.object.pose.bones[KNEE_RIGHT].constraints["Limit Rotation"].min_y = 0
-    context.object.pose.bones[KNEE_RIGHT].constraints["Limit Rotation"].max_y = 0
-    context.object.pose.bones[KNEE_RIGHT].constraints["Limit Rotation"].min_z = 0
-    context.object.pose.bones[KNEE_RIGHT].constraints["Limit Rotation"].max_z = 0
-
-    context.object.pose.bones[KNEE_RIGHT].constraints["Limit Rotation"].owner_space = "POSE"
-    context.object.pose.bones[KNEE_RIGHT].constraints["Limit Rotation"].name = "mmd_ik_limit_override"
-
-    # context.object.pose.bones[ANKLE_LEFT].constraints.new("DAMPED_TRACK")
-    # context.object.pose.bones[ANKLE_LEFT].constraints["Damped Track"].target = context.active_object
-    # context.object.pose.bones[ANKLE_LEFT].constraints["Damped Track"].subtarget = KNEE_LEFT
-    # context.object.pose.bones[ANKLE_LEFT].constraints["Damped Track"].track_axis = 'TRACK_Y'
-    # context.object.pose.bones[ANKLE_LEFT].constraints["Damped Track"].name = "mmd_ik_target_override"
-
-    context.object.pose.bones[ANKLE_LEFT].constraints.new("IK")
-    context.object.pose.bones[ANKLE_LEFT].constraints["IK"].target = context.active_object
-    context.object.pose.bones[ANKLE_LEFT].constraints["IK"].subtarget = TOE_IK_LEFT_BONE
-    context.object.pose.bones[ANKLE_LEFT].constraints["IK"].chain_count = 1
-    context.object.pose.bones[ANKLE_LEFT].constraints["IK"].use_tail = True
-    context.object.pose.bones[ANKLE_LEFT].constraints["IK"].iterations = 6
-
-    # context.object.pose.bones[ANKLE_RIGHT].constraints.new("DAMPED_TRACK")
-    # context.object.pose.bones[ANKLE_RIGHT].constraints["Damped Track"].target = context.active_object
-    # context.object.pose.bones[ANKLE_RIGHT].constraints["Damped Track"].subtarget = KNEE_LEFT
-    # context.object.pose.bones[ANKLE_RIGHT].constraints["Damped Track"].track_axis = 'TRACK_Y'
-    # context.object.pose.bones[ANKLE_RIGHT].constraints["Damped Track"].name = "mmd_ik_target_override"
-
-    context.object.pose.bones[ANKLE_RIGHT].constraints.new("IK")
-    context.object.pose.bones[ANKLE_RIGHT].constraints["IK"].target = context.active_object
-    context.object.pose.bones[ANKLE_RIGHT].constraints["IK"].subtarget = TOE_IK_RIGHT_BONE
-    context.object.pose.bones[ANKLE_RIGHT].constraints["IK"].chain_count = 1
-    context.object.pose.bones[ANKLE_RIGHT].constraints["IK"].use_tail = True
-    context.object.pose.bones[ANKLE_RIGHT].constraints["IK"].iterations = 6
-
-    if hasattr(context.object.pose.bones[KNEE_RIGHT], "mmd_bone"):
-        context.object.pose.bones[KNEE_RIGHT].mmd_bone.ik_rotation_constraint = 2  # 180*2/math.pi
-        context.object.pose.bones[KNEE_LEFT].mmd_bone.ik_rotation_constraint = 2  # 180*2/math.pi
-        context.object.pose.bones[ANKLE_RIGHT].mmd_bone.ik_rotation_constraint = 4  # 180*4/math.pi
-        context.object.pose.bones[ANKLE_LEFT].mmd_bone.ik_rotation_constraint = 4  # 180*4/math.pi
+    if hasattr(raw_object.pose.bones[KNEE_L], "mmd_bone"):
+        raw_object.pose.bones[KNEE_L].mmd_bone.ik_rotation_constraint = 2  # 180*2/math.pi
+        raw_object.pose.bones[KNEE_R].mmd_bone.ik_rotation_constraint = 2  # 180*2/math.pi
+        raw_object.pose.bones[ANKLE_L].mmd_bone.ik_rotation_constraint = 4  # 180*4/math.pi
+        raw_object.pose.bones[ANKLE_R].mmd_bone.ik_rotation_constraint = 4  # 180*4/math.pi
 
     # create an 'IK' bone collection and add the IK bones to it
-    if "IK" not in context.active_object.data.collections.keys():
-        context.active_object.data.collections.new(name="IK")
+    if "IK" not in raw_armature.collections.keys():
+        raw_armature.collections.new(name="IK")
 
-    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones[LEG_IK_LEFT_BONE])
-    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones[LEG_IK_RIGHT_BONE])
-    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones[TOE_IK_LEFT_BONE])
-    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones[TOE_IK_RIGHT_BONE])
-    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones[LEG_IK_LEFT_BONE_TIP])
-    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones[LEG_IK_RIGHT_BONE_TIP])
-    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones[TOE_IK_LEFT_BONE_TIP])
-    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones[TOE_IK_RIGHT_BONE_TIP])
+    raw_armature.collections["IK"].assign(raw_object.pose.bones[LEG_IK_L])
+    raw_armature.collections["IK"].assign(raw_object.pose.bones[LEG_IK_R])
+    raw_armature.collections["IK"].assign(raw_object.pose.bones[TOE_IK_L])
+    raw_armature.collections["IK"].assign(raw_object.pose.bones[TOE_IK_R])
 
 
 @register_wrap
