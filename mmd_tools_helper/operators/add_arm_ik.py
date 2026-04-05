@@ -3,6 +3,13 @@ import bpy
 from .. import model, register_wrap
 
 
+def hide_bone(bone: bpy.types.PoseBone):
+    if hasattr(bone, "hide"):
+        bone.hide = True
+    else:
+        bone.bone.hide = True
+
+
 def clear_IK(context):
     IK_target_bones = []
     IK_target_tip_bones = []
@@ -84,17 +91,23 @@ def main(context):
     bone = context.active_object.data.edit_bones.new("elbow_IK_L")
     bone.head = context.active_object.data.edit_bones[ELBOW_LEFT].head
     bone.tail = context.active_object.data.edit_bones[ELBOW_LEFT].head
-    bone.tail.z = context.active_object.data.edit_bones[ELBOW_LEFT].head.z - DOUBLE_LENGTH_OF_ELBOW_BONE
+    bone.tail.z = (
+        context.active_object.data.edit_bones[ELBOW_LEFT].head.z - DOUBLE_LENGTH_OF_ELBOW_BONE
+    )
 
     bone = context.active_object.data.edit_bones.new("elbow_IK_R")
     bone.head = context.active_object.data.edit_bones[ELBOW_RIGHT].head
     bone.tail = context.active_object.data.edit_bones[ELBOW_RIGHT].head
-    bone.tail.z = context.active_object.data.edit_bones[ELBOW_RIGHT].head.z - DOUBLE_LENGTH_OF_ELBOW_BONE
+    bone.tail.z = (
+        context.active_object.data.edit_bones[ELBOW_RIGHT].head.z - DOUBLE_LENGTH_OF_ELBOW_BONE
+    )
 
     bone = context.active_object.data.edit_bones.new("middle1_IK_L")
     bone.head = context.active_object.data.edit_bones[WRIST_LEFT].head
     bone.tail = context.active_object.data.edit_bones[WRIST_LEFT].head
-    bone.tail.z = context.active_object.data.edit_bones[WRIST_LEFT].head.z - DOUBLE_LENGTH_OF_ELBOW_BONE
+    bone.tail.z = (
+        context.active_object.data.edit_bones[WRIST_LEFT].head.z - DOUBLE_LENGTH_OF_ELBOW_BONE
+    )
     print("bone = ", bone)
     bone.parent = context.active_object.data.edit_bones["elbow_IK_L"]
     bone.use_connect = False
@@ -102,7 +115,9 @@ def main(context):
     bone = context.active_object.data.edit_bones.new("middle1_IK_R")
     bone.head = context.active_object.data.edit_bones[WRIST_RIGHT].head
     bone.tail = context.active_object.data.edit_bones[WRIST_RIGHT].head
-    bone.tail.z = context.active_object.data.edit_bones[WRIST_RIGHT].head.z - DOUBLE_LENGTH_OF_ELBOW_BONE
+    bone.tail.z = (
+        context.active_object.data.edit_bones[WRIST_RIGHT].head.z - DOUBLE_LENGTH_OF_ELBOW_BONE
+    )
     bone.parent = context.active_object.data.edit_bones["elbow_IK_R"]
     bone.use_connect = False
 
@@ -113,7 +128,7 @@ def main(context):
     bone.parent = context.active_object.data.edit_bones["elbow_IK_L"]
     bone.use_connect = False
     bpy.ops.object.mode_set(mode="POSE")
-    context.active_object.pose.bones["elbow_IK_L_t"].bone.hide = True
+    hide_bone(context.active_object.pose.bones["elbow_IK_L_t"])
     if hasattr(context.active_object.pose.bones["elbow_IK_L_t"], "mmd_bone"):
         context.active_object.pose.bones["elbow_IK_L_t"].mmd_bone.is_visible = False
         context.active_object.pose.bones["elbow_IK_L_t"].mmd_bone.is_controllable = False
@@ -127,7 +142,7 @@ def main(context):
     bone.parent = context.active_object.data.edit_bones["elbow_IK_R"]
     bone.use_connect = False
     bpy.ops.object.mode_set(mode="POSE")
-    context.active_object.pose.bones["elbow_IK_R_t"].bone.hide = True
+    hide_bone(context.active_object.pose.bones["elbow_IK_R_t"])
     if hasattr(context.active_object.pose.bones["elbow_IK_R_t"], "mmd_bone"):
         context.active_object.pose.bones["elbow_IK_R_t"].mmd_bone.is_visible = False
         context.active_object.pose.bones["elbow_IK_R_t"].mmd_bone.is_controllable = False
@@ -141,7 +156,7 @@ def main(context):
     bone.parent = context.active_object.data.edit_bones["middle1_IK_L"]
     bone.use_connect = False
     bpy.ops.object.mode_set(mode="POSE")
-    context.active_object.pose.bones["middle1_IK_L_t"].bone.hide = True
+    hide_bone(context.active_object.pose.bones["middle1_IK_L_t"])
     if hasattr(context.active_object.pose.bones["middle1_IK_L_t"], "mmd_bone"):
         context.active_object.pose.bones["middle1_IK_L_t"].mmd_bone.is_visible = False
         context.active_object.pose.bones["middle1_IK_L_t"].mmd_bone.is_controllable = False
@@ -155,7 +170,7 @@ def main(context):
     bone.parent = context.active_object.data.edit_bones["middle1_IK_R"]
     bone.use_connect = False
     bpy.ops.object.mode_set(mode="POSE")
-    context.active_object.pose.bones["middle1_IK_R_t"].bone.hide = True
+    hide_bone(context.active_object.pose.bones["middle1_IK_R_t"])
     if hasattr(context.active_object.pose.bones["middle1_IK_R_t"], "mmd_bone"):
         context.active_object.pose.bones["middle1_IK_R_t"].mmd_bone.is_visible = False
         context.active_object.pose.bones["middle1_IK_R_t"].mmd_bone.is_controllable = False
@@ -233,14 +248,30 @@ def main(context):
     if "IK" not in context.active_object.data.collections.keys():
         context.active_object.data.collections.new(name="IK")
 
-    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones["elbow_IK_L"])
-    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones["elbow_IK_R"])
-    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones["middle1_IK_L"])
-    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones["middle1_IK_R"])
-    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones["elbow_IK_L_t"])
-    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones["elbow_IK_R_t"])
-    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones["middle1_IK_L_t"])
-    context.active_object.data.collections["IK"].assign(context.active_object.pose.bones["middle1_IK_R_t"])
+    context.active_object.data.collections["IK"].assign(
+        context.active_object.pose.bones["elbow_IK_L"]
+    )
+    context.active_object.data.collections["IK"].assign(
+        context.active_object.pose.bones["elbow_IK_R"]
+    )
+    context.active_object.data.collections["IK"].assign(
+        context.active_object.pose.bones["middle1_IK_L"]
+    )
+    context.active_object.data.collections["IK"].assign(
+        context.active_object.pose.bones["middle1_IK_R"]
+    )
+    context.active_object.data.collections["IK"].assign(
+        context.active_object.pose.bones["elbow_IK_L_t"]
+    )
+    context.active_object.data.collections["IK"].assign(
+        context.active_object.pose.bones["elbow_IK_R_t"]
+    )
+    context.active_object.data.collections["IK"].assign(
+        context.active_object.pose.bones["middle1_IK_L_t"]
+    )
+    context.active_object.data.collections["IK"].assign(
+        context.active_object.pose.bones["middle1_IK_R_t"]
+    )
 
 
 @register_wrap

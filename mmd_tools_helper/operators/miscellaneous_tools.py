@@ -47,7 +47,10 @@ def analyze_selected_parent_child_bone_pair():
     selected_bones = []
 
     for b in bpy.context.active_object.pose.bones:
-        if b.bone.select:
+        if hasattr(b, "select"):
+            if b.select:
+                selected_bones.append(b.bone.name)
+        elif b.bone.select:
             selected_bones.append(b.bone.name)
 
     if len(selected_bones) != 2:

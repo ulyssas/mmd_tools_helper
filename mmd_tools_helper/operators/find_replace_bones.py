@@ -9,9 +9,13 @@ def main(context):
     replace_count = 0
     context.view_layer.objects.active = model.findArmature(context.active_object)
 
-    for b in context.active_object.data.bones:
-        if context.scene.bones_all_or_selected and not b.select:
-            continue
+    for b in context.active_object.pose.bones:
+        if context.scene.bones_all_or_selected:
+            if hasattr(b, "select"):
+                if not b.select:
+                    continue
+            elif not b.bone.select:
+                continue
         if "dummy" not in b.name and "shadow" not in b.name:
             old_name = b.name
             if context.scene.use_regex:
