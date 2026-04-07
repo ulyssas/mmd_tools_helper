@@ -11,7 +11,7 @@ translations_tuple = (
     (
         ("*", ""),
         ((), ()),
-        ("ja_JP", "MMD Tools Helper 4.3.0 (0)", (False, ("FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.",))),
+        ("ja_JP", "MMD Tools Helper 4.4.0 (0)", (False, ("FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.",))),
     ),
     (
         ("Operator", "Add arm IK to MMD model"),
