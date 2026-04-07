@@ -1,6 +1,7 @@
 import colorsys
 
 import bpy
+from mathutils import Vector
 
 from .. import model, register_wrap
 
@@ -68,18 +69,20 @@ def toon_image_to_color_ramp(toon_tex_color_ramp, toon_tex_node):
     return start_color
 
 
-def clear_nodes(nodes):
+def clear_nodes(nodes: bpy.types.Nodes, keep_uv: bool = True):
     """Remove all nodes except specified types (image texture) from the node tree."""
     # specify node types to keep
     keep_types = {"ShaderNodeTexImage"}
 
     for node in list(nodes):
+        if keep_uv and node.name == "mmd_tex_uv":
+            continue
         if node.bl_idname not in keep_types:
             nodes.remove(node)
 
 
-def main(context, clear_node=True):
-    o = context.active_object
+def main(context, clear_node=True, keep_sphere=True):
+    o: bpy.types.Object = context.active_object
     if o.type != "MESH":
         return
 
@@ -111,81 +114,110 @@ def main(context, clear_node=True):
             ramp.elements[1].position = 0.3
             ramp.elements[1].color = (1.0, 1.0, 1.0, 1.0)
 
-            mmd_toon_tex = nodes.get("mmd_toon_tex")
-            mmd_sphere_tex = nodes.get("mmd_sphere_tex")
-
-            shade_color = None
-            if mmd_toon_tex:
-                shade_color = toon_image_to_color_ramp(color_ramp, mmd_toon_tex)
-
             # for adding shading color
             mmd_base_tex = nodes.get("mmd_base_tex")
-            multiply_color = nodes.new(type="ShaderNodeMixRGB")
-            multiply_color.blend_type = "MULTIPLY"
-            multiply_color.inputs[0].default_value = 1.0
+            mmd_toon_tex = nodes.get("mmd_toon_tex")
+            mmd_sphere_tex = nodes.get("mmd_sphere_tex")
+            mult_shade_color = nodes.new(type="ShaderNodeMixRGB")
+            mult_shade_color.blend_type = "MULTIPLY"
+            mult_shade_color.inputs[0].default_value = 1.0
+            shade_color = nodes.new(type="ShaderNodeRGB")
+            shade_color.label = "Shade Color"
+            if mmd_toon_tex:
+                shade_color.outputs[0].default_value = toon_image_to_color_ramp(
+                    color_ramp, mmd_toon_tex
+                )
 
-            multiply_color.inputs[2].default_value = (1.0, 1.0, 1.0, 1.0)
-            if shade_color:
-                multiply_color.inputs[2].default_value = shade_color
+            # sphere Add/Multiply
+            if keep_sphere and mmd_sphere_tex:
+                mix_sphere = nodes.new(type="ShaderNodeMixRGB")
+                mix_sphere.blend_type = {"1": "MULTIPLY", "2": "ADD"}.get(
+                    m.mmd_material.sphere_texture_type, "MULTIPLY"
+                )
+                mix_sphere.inputs[0].default_value = 1.0
 
             # for no-shade material
-            mix_color = nodes.new(type="ShaderNodeMixRGB")
-            mix_color.blend_type = "MIX"
+            mix_toon_ramp = nodes.new(type="ShaderNodeMixRGB")
+            mix_toon_ramp.blend_type = "MIX"
             emission = nodes.new(type="ShaderNodeEmission")
 
             # transparent cutout
             cutout_frame = nodes.new(type="NodeFrame")
             transparent = nodes.new(type="ShaderNodeBsdfTransparent")
-            mix_shader = nodes.new(type="ShaderNodeMixShader")
+            mix_alpha_shader = nodes.new(type="ShaderNodeMixShader")
+            mix_alpha = nodes.new(type="ShaderNodeMath")
+            mix_alpha.label = "Alpha"
+            mix_alpha.operation = "MULTIPLY"
+            mix_alpha.use_clamp = True
+            mix_alpha.inputs[0].default_value = 1.0
+            mix_alpha.inputs[1].default_value = m.mmd_material.alpha
 
-            # node positions
-            if mmd_base_tex is not None:
-                origin = mmd_base_tex.location
+            # edit node positions
+            if mmd_base_tex:
+                origin = mmd_base_tex.location.copy()
             else:
-                origin = (0, 0)
+                origin = Vector([0, 0])
+            if keep_sphere and mmd_sphere_tex:
+                origin.x += 200
 
             diffuse.location = (origin[0] - 200, origin[1] + 300)
             shader_to_rgb.location = (diffuse.location[0] + 200, diffuse.location[1])
             color_ramp.location = (shader_to_rgb.location[0] + 200, shader_to_rgb.location[1])
-            mix_color.location = (color_ramp.location[0] + 300, color_ramp.location[1] - 100)
-            multiply_color.location = (origin[0] + 300, origin[1])
-            emission.location = (mix_color.location[0] + 200, mix_color.location[1])
+            mix_toon_ramp.location = (color_ramp.location[0] + 300, color_ramp.location[1] - 100)
+            mult_shade_color.location = (origin[0] + 300, origin[1])
+            shade_color.location = (
+                mult_shade_color.location[0],
+                mult_shade_color.location[1] - 200,
+            )
+            emission.location = (mix_toon_ramp.location[0] + 200, mix_toon_ramp.location[1])
             transparent.location = (emission.location[0] + 250, origin[1])
-            mix_shader.location = (transparent.location[0] + 200, emission.location[1])
-            output.location = (mix_shader.location[0] + 200, mix_shader.location[1])
-            if mmd_toon_tex is not None:
-                mmd_toon_tex.location = (origin[0], origin[1] - 300)
-            if mmd_sphere_tex is not None:
-                mmd_sphere_tex.location = (origin[0] + 300, origin[1] - 300)
+            mix_alpha.location = (emission.location[0] + 250, emission.location[1])
+            mix_alpha_shader.location = (transparent.location[0] + 200, emission.location[1])
+            output.location = (mix_alpha_shader.location[0] + 200, mix_alpha_shader.location[1])
+            if mmd_toon_tex:
+                mmd_toon_tex.location = (origin[0] + 50, origin[1] - 300)
+            if keep_sphere and mmd_sphere_tex:
+                mix_sphere.location = (origin[0] + 100, origin[1])
+                mmd_sphere_tex.location = (origin[0] - 200, origin[1] - 300)
 
             # Frame nodes
             toon_frame.label = "Toon Shading"
             diffuse.parent = toon_frame
             shader_to_rgb.parent = toon_frame
             color_ramp.parent = toon_frame
-            multiply_color.parent = toon_frame
-            mix_color.parent = toon_frame
+            mult_shade_color.parent = toon_frame
+            shade_color.parent = toon_frame
+            mix_toon_ramp.parent = toon_frame
             emission.parent = toon_frame
-            if mmd_base_tex is not None:
+            if mmd_base_tex:
                 mmd_base_tex.parent = toon_frame
 
-            cutout_frame.label = "Texture Cutout"
+            cutout_frame.label = "Texture Cutout & Alpha"
             transparent.parent = cutout_frame
-            mix_shader.parent = cutout_frame
+            mix_alpha.parent = cutout_frame
+            mix_alpha_shader.parent = cutout_frame
 
             # links
             links.new(diffuse.outputs[0], shader_to_rgb.inputs[0])
             links.new(shader_to_rgb.outputs[0], color_ramp.inputs[0])
-            links.new(color_ramp.outputs[0], mix_color.inputs[0])
-            links.new(multiply_color.outputs[0], mix_color.inputs[1])
-            links.new(mix_color.outputs[0], emission.inputs[0])
-            links.new(transparent.outputs[0], mix_shader.inputs[1])
-            links.new(emission.outputs[0], mix_shader.inputs[2])
-            links.new(mix_shader.outputs[0], output.inputs[0])
-            if mmd_base_tex is not None:
-                links.new(mmd_base_tex.outputs[0], mix_color.inputs[2])
-                links.new(mmd_base_tex.outputs[0], multiply_color.inputs[1])
-                links.new(mmd_base_tex.outputs[1], mix_shader.inputs[0])
+            links.new(color_ramp.outputs[0], mix_toon_ramp.inputs[0])
+            links.new(shade_color.outputs[0], mult_shade_color.inputs[2])
+            links.new(mult_shade_color.outputs[0], mix_toon_ramp.inputs[1])
+            links.new(mix_toon_ramp.outputs[0], emission.inputs[0])
+            links.new(transparent.outputs[0], mix_alpha_shader.inputs[1])
+            links.new(emission.outputs[0], mix_alpha_shader.inputs[2])
+            links.new(mix_alpha.outputs[0], mix_alpha_shader.inputs[0])
+            links.new(mix_alpha_shader.outputs[0], output.inputs[0])
+            if keep_sphere and mmd_base_tex and mmd_sphere_tex:
+                links.new(mmd_base_tex.outputs[0], mix_sphere.inputs[1])
+                links.new(mmd_sphere_tex.outputs[0], mix_sphere.inputs[2])
+                links.new(mix_sphere.outputs[0], mult_shade_color.inputs[1])
+                links.new(mix_sphere.outputs[0], mix_toon_ramp.inputs[2])
+                links.new(mmd_base_tex.outputs[1], mix_alpha.inputs[0])
+            elif mmd_base_tex:
+                links.new(mmd_base_tex.outputs[0], mix_toon_ramp.inputs[2])
+                links.new(mmd_base_tex.outputs[0], mult_shade_color.inputs[1])
+                links.new(mmd_base_tex.outputs[1], mix_alpha.inputs[0])
 
     return len(o.data.materials)
 
@@ -198,6 +230,7 @@ class MMDToonTexToShader(bpy.types.Operator):
     bl_options = {"REGISTER", "UNDO"}
 
     clear_node: bpy.props.BoolProperty(name="Clear existing nodes", default=True)
+    keep_sphere: bpy.props.BoolProperty(name="Keep sphere", default=True)
 
     @classmethod
     def poll(cls, context):
@@ -219,7 +252,7 @@ class MMDToonTexToShader(bpy.types.Operator):
             assert mesh_objects_list is not None, "The active object is not an MMD model."
             for o in mesh_objects_list:
                 context.view_layer.objects.active = o
-                count = main(context, self.clear_node)
+                count = main(context, self.clear_node, self.keep_sphere)
             self.report({"INFO"}, message=f"Converted {count} materials")
         except Exception as e:
             self.report({"ERROR"}, message=f"Failed to add toon shaders: {e}")
